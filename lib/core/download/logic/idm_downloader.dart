@@ -97,7 +97,7 @@ class IDMDownloader {
   Stream<Map<String, dynamic>> get statusStream => _statusController.stream;
 
   IDMDownloader({
-    this.maxWorkers = 6,
+    this.maxWorkers = 32,
     this.minChunkSize = 3 * 1024 * 1024,
     this.metaDir,
     this.globalSpeedLimit = 0,
@@ -107,10 +107,17 @@ class IDMDownloader {
   /// Calculates the optimal number of workers based on file size.
   static int calculateOptimalWorkers(int fileSize, int userMaxWorkers) {
     if (fileSize <= 0) return 1;
-    if (fileSize < 1024 * 1024) return 1;
-    if (fileSize < 50 * 1024 * 1024) return min(4, userMaxWorkers);
-    if (fileSize < 500 * 1024 * 1024) return min(8, userMaxWorkers);
-    return min(16, userMaxWorkers);
+    
+    const int megabyte = 1024 * 1024;
+    
+    if (fileSize < 2 * megabyte) return 1;
+    if (fileSize < 15 * megabyte) return min(2, userMaxWorkers);
+    if (fileSize < 50 * megabyte) return min(4, userMaxWorkers);
+    if (fileSize < 150 * megabyte) return min(8, userMaxWorkers);
+    if (fileSize < 500 * megabyte) return min(16, userMaxWorkers);
+    if (fileSize < 2000 * megabyte) return min(24, userMaxWorkers);
+    
+    return min(32, userMaxWorkers);
   }
 
   /// Returns the split check interval based on file size.

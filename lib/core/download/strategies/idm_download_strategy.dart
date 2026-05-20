@@ -92,7 +92,7 @@ class IDMDownloadStrategy extends DownloadStrategy {
       }
 
       _downloader = IDMDownloader(
-        maxWorkers: maxWorkers ?? 6,
+        maxWorkers: maxWorkers ?? 32, // Allow scaling up to what calculateOptimalWorkers determines
         metaDir: metaDir,
         globalSpeedLimit: speedLimit,
         proxyConfig: proxyConfig,

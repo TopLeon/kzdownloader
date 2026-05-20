@@ -656,7 +656,7 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                     child: Text(
                       '... e altri ${workers.length - 6} worker',
                       style: GoogleFonts.montserrat(
-                        fontSize: 7,
+                        fontSize: 10,
                         color: colorScheme.onSurfaceVariant.withOpacity(0.9),
                         fontStyle: FontStyle.italic,
                       ),
