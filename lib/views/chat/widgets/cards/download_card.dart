@@ -207,7 +207,7 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
             onEnter: (_) => setState(() => _isHovered = true),
             onExit: (_) => setState(() => _isHovered = false),
             child: RainbowAnimatedBorderForever(
-              disabled: !isSummarizing && !isDownloading,
+              disabled: !isSummarizing,
               borderRadius: 16,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
