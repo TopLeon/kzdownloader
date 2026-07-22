@@ -1,10 +1,10 @@
 <div align="center">
 <p align="center">
-  <img src="../img/logo_out.png" width="50%"/>
+  <img src="../assets/banner.png" width="60%"/>
   <br>
 </p>
 
-**A beautiful, cross-platform desktop download manager with AI-powered video analysis.**
+**Un bellissimo gestore di download desktop multipiattaforma con analisi video basata su AI.**
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?logo=dart)](https://dart.dev)
@@ -19,49 +19,47 @@
 ---
 
 > [!WARNING]
-> **KZDownloader è attualmente in beta.** Potrebbero essere presenti bug o funzionalità incomplete. Segnala eventuali problemi sull'[issue tracker](../../issues).
+> **KZDownloader è attualmente in beta.** Potresti incontrare bug o funzionalità incomplete. Segnala eventuali problemi sull'[issue tracker](../../issues).
 
 <a id="italian"></a>
 
 ## Panoramica
 
-KZDownloader è un'applicazione desktop cross-platform realizzata con Flutter per scaricare video, musica e file generici da centinaia di siti web. Integra un assistente AI in grado di riassumere video di YouTube e rispondere a domande su di essi. 
+KZDownloader è un'applicazione desktop multipiattaforma realizzata con Flutter che permette di scaricare video, musica e file generici da centinaia di siti web. Integra un potente assistente AI in grado di riassumere i contenuti video di YouTube e rispondere a domande su di essi.
 
-Il design è moderno, minimale e completamente reattivo, con bordi animati a gradiente neon/arcobaleno sulle card di download e sugli elementi interattivi, transizioni fluide e feedback in tempo reale.
+Il design è moderno, minimale e completamente reattivo, con bordi animati a gradiente neon sulle card di download e sugli elementi interattivi, transizioni fluide e feedback in tempo reale.
 
 ## ✨ Funzionalità
 
 ### 🎬 Download di Video e Audio
 - Scarica video e audio da **YouTube** e centinaia di altre piattaforme grazie a [yt-dlp](https://github.com/yt-dlp/yt-dlp).
-- Scegli **formato video** (MP4, MKV) e **qualità** prima del download, con due modalità di selezione:
-  - **Semplice**: Migliore · Alta · Media · Bassa
-  - **Esperto**: Best · 2160p (4K) · 1440p · 1080p · 720p · 480p
-- Scarica interi **playlist di YouTube** con concorrenza configurabile — ogni video è tracciato individualmente.
-- Estrazione solo audio in **MP3, M4A, OGG (Vorbis)**.
+- Scegli **formato video** (MP4, MKV) e **qualità** prima del download.
+- Scarica intere **playlist di YouTube** con concorrenza configurabile: ogni video viene tracciato individualmente.
+- Estrazione solo audio in **MP3, M4A e OGG**.
 
 ### 📁 Downloader Generico
-- Scaricamento veloce a **chunk multipli**, in stile IDM, per qualsiasi link HTTP/HTTPS diretto.
-  - **Writer Isolate**: un Dart isolate dedicato scrive i dati direttamente nella posizione finale del file tramite `RandomAccessFile`, eliminando file temporanei e passaggi I/O ridondanti.
-  - **Controllo del backpressure (ackIterator)**: ogni worker di rete attende la conferma di scrittura su disco da parte del Writer Isolate prima di scaricare altri dati — prevenendo crash per Out-of-Memory quando la velocità di rete supera quella di scrittura del disco.
-  - **Dynamic Connection Reuse**: al termine del proprio intervallo di byte, una connessione viene immediatamente riassegnata al chunk più lento, mantenendo il massimo numero di connessioni attive in ogni momento per velocità di download costantemente al picco.
-- **Ripresa automatica** — i download interrotti riprendono da dove si erano fermati se il server supporta le range request.
-- Visualizzazione del progresso per ogni chunk con contatore dei worker attivi e barre di avanzamento per segmento.
-- Backend HTTP basato su Rust ([rhttp_plus](https://pub.dev/packages/rhttp_plus)) per la massima velocità e per il **TLS fingerprinting**, che consente di aggirare i sistemi anti-bot su server protetti.
+- Download **a chunk multipli** in stile IDM, estremamente veloce, per qualsiasi link HTTP/HTTPS diretto.
+  - **Writer Isolate**: un isolate Dart dedicato scrive i dati direttamente nella posizione finale del file tramite `RandomAccessFile`, eliminando file temporanei e passaggi I/O ridondanti.
+  - **Controllo del backpressure (ackIterator)**: ogni worker di rete attende la conferma di scrittura su disco da parte del Writer Isolate prima di scaricare altro, prevenendo crash per Out-of-Memory quando la velocità di rete supera quella di scrittura del disco.
+  - **Dynamic Connection Reuse**: quando una connessione termina il proprio intervallo di byte, viene subito riassegnata al chunk più lento, mantenendo sempre il massimo numero di connessioni attive per una velocità di download costantemente al picco.
+- **Ripresa automatica**: i download interrotti riprendono da dove si erano fermati se il server supporta le range request.
+- Visualizzazione del progresso per ogni chunk con conteggio dei worker attivi e barre di avanzamento per segmento.
+- Backend HTTP basato su Rust ([rhttp_plus](https://pub.dev/packages/rhttp_plus)) per la massima velocità e per il **TLS fingerprinting**, che aiuta ad aggirare i sistemi anti-bot su server protetti.
 
-### 🤖 AI — Riassunti e Chat sui Video
+### 🤖 Riassunti Video e Chat
 - Recupera automaticamente la **trascrizione** o la **descrizione** di un video YouTube e genera un riassunto strutturato tramite LLM.
-- Poni **domande di follow-up** in una sessione di chat persistente legata al video — la cronologia Q&A viene salvata localmente.
-- **Funzionalità AI 100% Locali**: Esegui l'intera analisi dei video e chatta offline con assoluta privacy.
+- Poni **domande di follow-up** in una sessione di chat persistente legata al video: la cronologia Q&A viene salvata localmente.
+- **Funzionalità AI 100% locali**: esegui l'intera analisi dei video e chatta offline con assoluta privacy.
 - Supporto per più provider AI:
-  - **Ollama** (locale al 100%, nessun dato lascia il dispositivo)
-  - **LM Studio** (locale al 100%, server locale compatibile con OpenAI)
+  - **Ollama** (completamente locale, nessun dato lascia il dispositivo)
+  - **LM Studio** (completamente locale, server locale compatibile con OpenAI)
   - **OpenAI** (chiave API richiesta)
   - **Google Gemini** (chiave API richiesta)
 - Output in streaming con rendering Markdown animato.
 - Dimensione del contesto configurabile (numero massimo di caratteri inviati all'LLM).
 
 ### 🎵 Libreria Musicale e Player
-- Scheda **Musica** dedicata con la lista di tutti i file audio scaricati.
+- Scheda **Musica** dedicata con l'elenco di tutti i file audio scaricati.
 - **Player audio** integrato con barra di avanzamento, play/pausa, avanti/indietro e seek.
 - **Gestione playlist**: crea playlist con nome personalizzato e aggiungi le tracce.
 
@@ -73,7 +71,7 @@ Il design è moderno, minimale e completamente reattivo, con bordi animati a gra
 - Selezione della **cartella di download** con onboarding al primo avvio.
 - Preset predefiniti di **formato**, **qualità** e **formato audio**.
 - Tema **Scuro / Chiaro / Sistema** con transizioni fluide.
-- **Lingua dell'interfaccia**: Inglese 🇬🇧 e Italiano 🇮🇹.
+- **Lingua dell'interfaccia**: Inglese e Italiano.
 - Configurazione dei **download simultanei** per playlist e globali.
 - Selezione del modello e del provider AI con gestione delle chiavi API.
 
@@ -84,31 +82,52 @@ Il design è moderno, minimale e completamente reattivo, con bordi animati a gra
 - Effetti glow glassmorphism sulla schermata iniziale e transizioni fluide nell'intera UI.
 - Layout responsive con adattamenti separati per Windows/Linux e macOS.
 
-## 🕹️ Demo
+## 🏗️ Architettura e Stack Tecnologico
 
-https://github.com/user-attachments/assets/024d8e8c-fddb-4685-95f1-4b4d1f3212e6
+| Livello | Tecnologia |
+|---|---|
+| Framework UI | Flutter 3.x + Material 3 |
+| Gestione stato | flutter_riverpod + riverpod_annotation (code generation) |
+| Database locale | isar_community |
+| AI / LLM | langchain, langchain_ollama, langchain_openai, langchain_google |
+| Client HTTP | rhttp_plus (FFI basato su Rust, TLS fingerprinting) |
+| Metadati video | youtube_explode_dart + fallback yt-dlp |
+| Riproduzione audio | just_audio + media_kit (Windows) |
+| Secure storage | flutter_secure_storage |
+| Font e icone | Google Fonts, ultimate_flutter_icons, not_static_icons |
+| Localizzazione | Flutter Gen-l10n (file ARB) |
 
+## 📦 Binari Esterni (scaricati automaticamente al primo avvio)
 
+KZDownloader scarica e gestisce automaticamente i seguenti strumenti esterni nella directory di supporto dell'app: non è richiesta alcuna installazione manuale.
 
-## ⬇️ Download
+| Binario | Scopo |
+|---|---|
+| **yt-dlp** | Download video/audio ed estrazione dei metadati |
+| **ffmpeg** | Post-processing, remuxing ed estrazione audio |
+| **deno** | Necessario a ytdlp per l'estrazione dei dati |
+
+## 🚀 Avvio Rapido
+
+### ⬇️ Download
 
 I binari precompilati per Windows e macOS sono disponibili direttamente nella sezione [**Releases**](../../releases) — nessun ambiente di build necessario.
 
 > ⚠️ Utenti macOS: poiché l'app è attualmente autofirmata, Gatekeeper la bloccherà al primo avvio. Per eseguirla, fai clic con il pulsante destro del mouse sull'app, seleziona Apri, quindi fai nuovamente clic su Apri nella finestra di dialogo.
 
-## 🚀 Avvio Rapido
+### Processo di Compilazione
 
-### Prerequisiti
+#### Prerequisiti
 
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) ≥ 3.2.0
 - Dart SDK ≥ 3.2.0
 - Target desktop configurato (`flutter config --enable-windows-desktop` / `--enable-macos-desktop` / `--enable-linux-desktop`)
 
-### Solo Linux
+#### Solo Linux
 
-Se stai compilando questa applicazione Flutter su Linux (Ubuntu), devi configurare correttamente l'ambiente per evitare errori di build con i plugin nativi (come `rhttp_plus` e `flutter_secure_storage`).
+Se stai compilando questa applicazione Flutter su Linux (Ubuntu), devi configurare correttamente l'ambiente per evitare errori di build con i plugin nativi, come `rhttp_plus` e `flutter_secure_storage`.
 
-#### 1. Evita Flutter tramite Snap
+##### 1. Evita Flutter tramite Snap
 
 L'installazione di Flutter tramite Snap gira in un container isolato e può causare incompatibilità con `glibc` durante la compilazione delle dipendenze native Rust/C++.
 Se hai installato Flutter tramite Snap, rimuovilo e usa invece il clone ufficiale del repository:
@@ -119,7 +138,7 @@ git clone https://github.com/flutter/flutter.git -b stable ~/.flutter
 export PATH="$PATH:$HOME/.flutter/bin"
 ```
 
-#### 2. Installa le dipendenze di sistema richieste
+##### 2. Installa le dipendenze di sistema richieste
 
 Il progetto richiede strumenti di compilazione nativi, librerie GTK, Rust e l'API GNOME Secret Service. Installali con `apt` e `rustup`:
 
@@ -136,32 +155,7 @@ source $HOME/.cargo/env
 sudo apt install libmpv-dev mpv
 ```
 
-## 🏗️ Architettura e Stack Tecnologico
-
-| Livello | Tecnologia |
-|---|---|
-| UI Framework | Flutter 3.x + Material 3 |
-| State Management | flutter_riverpod + riverpod_annotation (code generation) |
-| Database Locale | isar_community |
-| AI / LLM | langchain, langchain_ollama, langchain_openai, langchain_google |
-| Client HTTP | rhttp_plus (FFI basato su Rust, TLS fingerprinting) |
-| Metadati Video | youtube_explode_dart + yt-dlp come fallback |
-| Riproduzione Audio | just_audio + media_kit (Windows) |
-| Secure Storage | flutter_secure_storage |
-| Font e Icone | Google Fonts, ultimate_flutter_icons, not_static_icons |
-| Localizzazione | Flutter Gen-l10n (file ARB) |
-
-## 📦 Binari Esterni (scaricati automaticamente al primo avvio)
-
-KZDownloader scarica e gestisce automaticamente i seguenti strumenti esterni nella directory di supporto dell'applicazione — nessuna installazione manuale richiesta:
-
-| Binario | Scopo |
-|---|---|
-| **yt-dlp** | Download di video/audio ed estrazione metadati |
-| **ffmpeg** | Post-processing, remuxing ed estrazione audio |
-| **deno** | Necessario a ytdlp per estrarre i dati |
-
-### Installazione
+### Clone e Avvio
 
 ```bash
 # Clona il repository
@@ -182,38 +176,34 @@ flutter run -d windows   # oppure macos / linux
 
 Al primo avvio KZDownloader:
 1. Chiederà di selezionare una **cartella di download predefinita**.
-2. Scaricherà automaticamente **yt-dlp** e **ffmpeg** in background.
+2. Scaricherà automaticamente **yt-dlp**, **ffmpeg** e **deno** in background.
 
 Per le funzionalità AI, apri le **Impostazioni** e scegli un provider:
-- **Ollama**: installa [Ollama](https://ollama.com) in locale e scarica un modello (es. `ollama pull llama3`).
-- **OpenAI / Google**: inserisci la tua chiave API nel pannello Impostazioni o al primo avvio — verrà salvata nel keychain del sistema operativo.
+- **Ollama**: installa [Ollama](https://ollama.com) in locale e scarica un modello (ad esempio `ollama pull llama3`).
+- **OpenAI / Google**: inserisci la tua chiave API nel pannello Impostazioni o al primo avvio: verrà salvata in modo sicuro nel keychain del sistema operativo.
 
 ## 📋 Piattaforme Supportate
 
 | Piattaforma | Stato |
 |---|---|
-| Windows | ✅ Pieno supporto |
-| macOS | ✅ Pieno supporto (layout adattato) |
+| Windows | ✅ Supporto completo |
+| macOS | ✅ Supporto completo |
 | Linux | ⚠️ Da testare |
 | Android / iOS | ❌ Non supportato |
-
-## ⚠️ Problemi Noti
-
-- Il pannello di dettaglio delle playlist M3U8 presenta ancora alcuni bug visivi e imperfezioni.
 
 ## 🗂️ Struttura del Progetto
 
 ```
 lib/
-├── main.dart                  # Entry point, schermata di avvio
+├── main.dart                  # Entry point dell'app, schermata iniziale
 ├── core/
 │   ├── download/
 │   │   ├── logic/             # ChunkDownloader, IDMDownloader, YtDlpService
 │   │   ├── providers/         # Provider Riverpod per i download
 │   │   └── strategies/        # Strategie di download (IDM, yt-dlp, playlist, standard)
-│   ├── providers/             # Provider tema, lingua, qualità
-│   ├── services/              # DB, LLM, audio player, impostazioni, secure storage
-│   ├── theme/                 # Temi Material 3 (chiaro/scuro)
+│   ├── providers/             # Provider per tema, locale e qualità
+│   ├── services/              # DB, LLM, player audio, impostazioni, secure storage
+│   ├── theme/                 # Temi Material 3 chiari/scuri
 │   └── utils/                 # BinaryManager, ChecksumVerifier, FileUtils
 ├── models/                    # Modelli Isar (DownloadTask, Playlist)
 ├── views/
@@ -227,7 +217,11 @@ lib/
 
 | Funzionalità | Stato |
 |---|---|
-| **Integrazione con il browser** — cattura i download direttamente da Chrome / Firefox tramite un'estensione companion | 🔜 In programma |
+| **Integrazione con il browser** — cattura i download direttamente da Chrome / Firefox tramite un'estensione companion | 🔜 Pianificata |
+
+## ⚠️ Problemi Noti
+
+- Il pannello dei dettagli delle playlist M3U8 presenta ancora alcuni bug visivi e imperfezioni.
 
 ## 🤝 Contribuire
 
