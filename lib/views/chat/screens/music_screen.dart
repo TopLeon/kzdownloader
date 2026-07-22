@@ -186,7 +186,7 @@ class _MusicScreenState extends ConsumerState<MusicScreen> {
                                                   BorderRadius.circular(8),
                                               expandedBorder: Border.all(
                                                 color: colorScheme.primary
-                                                    .withOpacity(0.15),
+                                                    .withValues(alpha: 0.15),
                                                 width: 1,
                                               ),
                                             ),
@@ -373,7 +373,7 @@ class _MusicScreenState extends ConsumerState<MusicScreen> {
                                                   BorderRadius.circular(8),
                                               expandedBorder: Border.all(
                                                 color: colorScheme.primary
-                                                    .withOpacity(0.15),
+                                                    .withValues(alpha: 0.15),
                                                 width: 1,
                                               ),
                                             ),

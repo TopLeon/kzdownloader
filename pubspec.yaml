@@ -103,7 +103,7 @@ flutter:
     - assets/
 
 flutter_launcher_icons:
-  image_path: "assets/icon.png"
+  image_path: "assets/logo.png"
   windows:
     generate: true
     icon_size: 256

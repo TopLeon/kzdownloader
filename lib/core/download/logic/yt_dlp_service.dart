@@ -213,7 +213,7 @@ class YtDlpService {
     // Apply global speed limit if set
     if (limitRateBps > 0) {
       args.addAll(
-          ['--limit-rate', '${limitRateBps}']); // yt-dlp accepts bytes/s
+          ['--limit-rate', '$limitRateBps']); // yt-dlp accepts bytes/s
     }
 
     final outputTemplate = customFilename != null

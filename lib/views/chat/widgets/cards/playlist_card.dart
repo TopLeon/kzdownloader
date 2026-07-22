@@ -91,8 +91,8 @@ class _YouTubePlaylistCardState extends ConsumerState<YouTubePlaylistCard> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final hoverColor = isDark
-        ? Colors.white.withOpacity(0.05)
-        : Colors.black.withOpacity(0.05);
+        ? Colors.white.withValues(alpha: 0.05)
+        : Colors.black.withValues(alpha: 0.05);
 
     final baseColor = widget.isSelected
         ? colorScheme.tertiary
@@ -107,9 +107,9 @@ class _YouTubePlaylistCardState extends ConsumerState<YouTubePlaylistCard> {
         widget.playlist.downloadStatus == WorkStatus.running || live != null;
 
     // Determine border color based on status
-    Color borderColor = colorScheme.primary.withOpacity(0.15);
+    Color borderColor = colorScheme.primary.withValues(alpha: 0.15);
     if (widget.playlist.downloadStatus == WorkStatus.failed) {
-      borderColor = colorScheme.error.withOpacity(0.5);
+      borderColor = colorScheme.error.withValues(alpha: 0.5);
     }
 
     return Padding(
@@ -163,7 +163,7 @@ class _YouTubePlaylistCardState extends ConsumerState<YouTubePlaylistCard> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
                                   color: isDark
-                                      ? Colors.white.withOpacity(0.1)
+                                      ? Colors.white.withValues(alpha: 0.1)
                                       : colorScheme.surfaceContainerHighest,
                                 ),
                                 child: ClipRRect(
@@ -186,8 +186,8 @@ class _YouTubePlaylistCardState extends ConsumerState<YouTubePlaylistCard> {
                                             begin: Alignment.topCenter,
                                             end: Alignment.bottomCenter,
                                             colors: [
-                                              Colors.black.withOpacity(0.3),
-                                              Colors.black.withOpacity(0.6),
+                                              Colors.black.withValues(alpha: 0.3),
+                                              Colors.black.withValues(alpha: 0.6),
                                             ],
                                           ),
                                         ),
@@ -248,7 +248,7 @@ class _YouTubePlaylistCardState extends ConsumerState<YouTubePlaylistCard> {
                                                   horizontal: 6, vertical: 1),
                                               decoration: BoxDecoration(
                                                 color: colorScheme.primary
-                                                    .withOpacity(0.15),
+                                                    .withValues(alpha: 0.15),
                                                 borderRadius:
                                                     BorderRadius.circular(4),
                                               ),
@@ -330,7 +330,7 @@ class _YouTubePlaylistCardState extends ConsumerState<YouTubePlaylistCard> {
                                         child: LinearProgressIndicator(
                                           value: widget.playlist.progress,
                                           backgroundColor: colorScheme.primary
-                                              .withOpacity(0.2),
+                                              .withValues(alpha: 0.2),
                                           minHeight: 3,
                                         ),
                                       ),
@@ -355,7 +355,7 @@ class _YouTubePlaylistCardState extends ConsumerState<YouTubePlaylistCard> {
                                     gradient: LinearGradient(
                                       colors: [
                                         Color.alphaBlend(hoverColor, baseColor)
-                                            .withOpacity(0.0),
+                                            .withValues(alpha: 0.0),
                                         Color.alphaBlend(hoverColor, baseColor),
                                         Color.alphaBlend(hoverColor, baseColor),
                                       ],
@@ -379,7 +379,7 @@ class _YouTubePlaylistCardState extends ConsumerState<YouTubePlaylistCard> {
                                                 side: BorderSide(
                                                     width: 1,
                                                     color: colorScheme.primary
-                                                        .withOpacity(0.15))),
+                                                        .withValues(alpha: 0.15))),
                                             backgroundColor:
                                                 colorScheme.tertiary,
                                             foregroundColor:
@@ -400,7 +400,7 @@ class _YouTubePlaylistCardState extends ConsumerState<YouTubePlaylistCard> {
                                                 side: BorderSide(
                                                     width: 1,
                                                     color: colorScheme.primary
-                                                        .withOpacity(0.15))),
+                                                        .withValues(alpha: 0.15))),
                                             backgroundColor:
                                                 colorScheme.tertiary,
                                             foregroundColor:
@@ -421,7 +421,7 @@ class _YouTubePlaylistCardState extends ConsumerState<YouTubePlaylistCard> {
                                                 side: BorderSide(
                                                     width: 1,
                                                     color: colorScheme.primary
-                                                        .withOpacity(0.15))),
+                                                        .withValues(alpha: 0.15))),
                                             backgroundColor:
                                                 colorScheme.tertiary,
                                             foregroundColor:
@@ -438,7 +438,7 @@ class _YouTubePlaylistCardState extends ConsumerState<YouTubePlaylistCard> {
                                               side: BorderSide(
                                                   width: 1,
                                                   color: colorScheme.primary
-                                                      .withOpacity(0.15))),
+                                                      .withValues(alpha: 0.15))),
                                           backgroundColor: colorScheme.tertiary,
                                           foregroundColor: colorScheme.primary,
                                         ),
@@ -459,7 +459,7 @@ class _YouTubePlaylistCardState extends ConsumerState<YouTubePlaylistCard> {
                                               side: BorderSide(
                                                   width: 1,
                                                   color: colorScheme.primary
-                                                      .withOpacity(0.15))),
+                                                      .withValues(alpha: 0.15))),
                                           foregroundColor: colorScheme.error,
                                         ),
                                       ),
@@ -486,12 +486,12 @@ class _YouTubePlaylistCardState extends ConsumerState<YouTubePlaylistCard> {
 
     return Container(
       color: isDark
-          ? Colors.white.withOpacity(0.1)
+          ? Colors.white.withValues(alpha: 0.1)
           : colorScheme.surfaceContainerHighest,
       child: Center(
         child: FIcon(
           RI.RiPlayListLine,
-          color: colorScheme.onSurfaceVariant.withOpacity(0.3),
+          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
           size: 32,
         ),
       ),

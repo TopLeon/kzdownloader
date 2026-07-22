@@ -49,12 +49,14 @@ Il design è moderno, minimale e completamente reattivo, con bordi animati a gra
 - Backend HTTP basato su Rust ([rhttp_plus](https://pub.dev/packages/rhttp_plus)) per la massima velocità e per il **TLS fingerprinting**, che consente di aggirare i sistemi anti-bot su server protetti.
 
 ### 🤖 AI — Riassunti e Chat sui Video
-- Recupera automaticamente la **trascrizione / descrizione** di un video YouTube e genera un riassunto strutturato tramite LLM.
-- Poni **domande di follow-up** in una sessione di chat persistente legata al video — la cronologia Q&A è salvata localmente.
+- Recupera automaticamente la **trascrizione** o la **descrizione** di un video YouTube e genera un riassunto strutturato tramite LLM.
+- Poni **domande di follow-up** in una sessione di chat persistente legata al video — la cronologia Q&A viene salvata localmente.
+- **Funzionalità AI 100% Locali**: Esegui l'intera analisi dei video e chatta offline con assoluta privacy.
 - Supporto per più provider AI:
   - **Ollama** (locale al 100%, nessun dato lascia il dispositivo)
-  - **OpenAI** (GPT-3.5-turbo, GPT-4, GPT-4o, …)
-  - **Google Gemini** (Gemini 2.5 Pro, Flash, …)
+  - **LM Studio** (locale al 100%, server locale compatibile con OpenAI)
+  - **OpenAI** (chiave API richiesta)
+  - **Google Gemini** (chiave API richiesta)
 - Output in streaming con rendering Markdown animato.
 - Dimensione del contesto configurabile (numero massimo di caratteri inviati all'LLM).
 
@@ -94,6 +96,46 @@ I binari precompilati per Windows e macOS sono disponibili direttamente nella se
 
 > ⚠️ Utenti macOS: poiché l'app è attualmente autofirmata, Gatekeeper la bloccherà al primo avvio. Per eseguirla, fai clic con il pulsante destro del mouse sull'app, seleziona Apri, quindi fai nuovamente clic su Apri nella finestra di dialogo.
 
+## 🚀 Avvio Rapido
+
+### Prerequisiti
+
+- [Flutter SDK](https://docs.flutter.dev/get-started/install) ≥ 3.2.0
+- Dart SDK ≥ 3.2.0
+- Target desktop configurato (`flutter config --enable-windows-desktop` / `--enable-macos-desktop` / `--enable-linux-desktop`)
+
+### Solo Linux
+
+Se stai compilando questa applicazione Flutter su Linux (Ubuntu), devi configurare correttamente l'ambiente per evitare errori di build con i plugin nativi (come `rhttp_plus` e `flutter_secure_storage`).
+
+#### 1. Evita Flutter tramite Snap
+
+L'installazione di Flutter tramite Snap gira in un container isolato e può causare incompatibilità con `glibc` durante la compilazione delle dipendenze native Rust/C++.
+Se hai installato Flutter tramite Snap, rimuovilo e usa invece il clone ufficiale del repository:
+
+```bash
+sudo snap remove flutter
+git clone https://github.com/flutter/flutter.git -b stable ~/.flutter
+export PATH="$PATH:$HOME/.flutter/bin"
+```
+
+#### 2. Installa le dipendenze di sistema richieste
+
+Il progetto richiede strumenti di compilazione nativi, librerie GTK, Rust e l'API GNOME Secret Service. Installali con `apt` e `rustup`:
+
+```bash
+# Build tools, file di sviluppo GTK e header di Secret Service
+sudo apt update
+sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev
+
+# Installa la toolchain Rust (necessaria per rhttp_plus)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+
+# Installa libmpv per media_kit
+sudo apt install libmpv-dev mpv
+```
+
 ## 🏗️ Architettura e Stack Tecnologico
 
 | Livello | Tecnologia |
@@ -118,14 +160,6 @@ KZDownloader scarica e gestisce automaticamente i seguenti strumenti esterni nel
 | **yt-dlp** | Download di video/audio ed estrazione metadati |
 | **ffmpeg** | Post-processing, remuxing ed estrazione audio |
 | **deno** | Necessario a ytdlp per estrarre i dati |
-
-## 🚀 Avvio Rapido
-
-### Prerequisiti
-
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) ≥ 3.2.0
-- Dart SDK ≥ 3.2.0
-- Target desktop configurato (`flutter config --enable-windows-desktop` / `--enable-macos-desktop` / `--enable-linux-desktop`)
 
 ### Installazione
 
@@ -160,8 +194,12 @@ Per le funzionalità AI, apri le **Impostazioni** e scegli un provider:
 |---|---|
 | Windows | ✅ Pieno supporto |
 | macOS | ✅ Pieno supporto (layout adattato) |
-| Linux | ⚠️ Bisogna testare |
+| Linux | ⚠️ Da testare |
 | Android / iOS | ❌ Non supportato |
+
+## ⚠️ Problemi Noti
+
+- Il pannello di dettaglio delle playlist M3U8 presenta ancora alcuni bug visivi e imperfezioni.
 
 ## 🗂️ Struttura del Progetto
 
@@ -195,6 +233,11 @@ lib/
 
 Contributi, segnalazioni di bug e richieste di funzionalità sono benvenuti. Apri una issue o invia una pull request.
 
-The maintainer of KZDownloader cannot be held liable for misuse of this application, as stated in the GPL-3.0 license (section 16).
-The usage of this application may also cause a violation of the Terms of Service between you and the stream provider.
-Users are personally responsible for ensuring they use this software fairly and within legal boundaries.
+## 📄 Licenza
+
+Questo progetto è distribuito con licenza **GNU General Public License v3.0 (GPL-3.0)** — vedi il file [LICENSE](LICENSE) per i dettagli.
+
+Il manutentore di KZDownloader non può essere ritenuto responsabile per un uso improprio di questa applicazione, come indicato nella licenza GPL-3.0 (sezione 16).
+L'uso di questa applicazione può inoltre causare una violazione dei Termini di Servizio tra l'utente e il fornitore dello stream.
+Gli utenti sono personalmente responsabili di assicurarsi di usare questo software in modo corretto e nel rispetto dei limiti legali.
+

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=KZ Downloader
+Comment=A beautiful, cross-platform desktop download manager with AI-powered video analysis
+Exec=kzdownloader
+Icon=kzdownloader
+Terminal=false
+Categories=Network;FileTransfer;
+StartupWMClass=com.le0nz.kzdownloader

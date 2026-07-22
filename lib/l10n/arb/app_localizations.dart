@@ -1079,20 +1079,62 @@ abstract class AppLocalizations {
   /// No description provided for @aiProviderOllama.
   ///
   /// In en, this message translates to:
-  /// **'Ollama (Local)'**
+  /// **'Ollama'**
   String get aiProviderOllama;
 
   /// No description provided for @aiProviderOpenAI.
   ///
   /// In en, this message translates to:
-  /// **'OpenAI (Cloud)'**
+  /// **'OpenAI'**
   String get aiProviderOpenAI;
 
   /// No description provided for @aiProviderGoogle.
   ///
   /// In en, this message translates to:
-  /// **'Google AI (Cloud)'**
+  /// **'Google AI'**
   String get aiProviderGoogle;
+
+  /// No description provided for @aiProviderLmStudio.
+  ///
+  /// In en, this message translates to:
+  /// **'LM Studio'**
+  String get aiProviderLmStudio;
+
+  /// No description provided for @lmStudioBaseUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'LM Studio Server URL'**
+  String get lmStudioBaseUrl;
+
+  /// No description provided for @lmStudioBaseUrlHint.
+  ///
+  /// In en, this message translates to:
+  /// **'http://localhost:1234/v1'**
+  String get lmStudioBaseUrlHint;
+
+  /// No description provided for @lmStudioApiKey.
+  ///
+  /// In en, this message translates to:
+  /// **'API Key (optional)'**
+  String get lmStudioApiKey;
+
+  /// No description provided for @lmStudioApiKeyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'lm-studio'**
+  String get lmStudioApiKeyHint;
+
+  /// No description provided for @lmStudioDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Local API, OpenAI-compatible (GGUF, MLX, etc.)'**
+  String get lmStudioDescription;
+
+  /// No description provided for @lmStudioOnboardingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your LM Studio server details to use it for AI features:'**
+  String get lmStudioOnboardingSubtitle;
 
   /// No description provided for @openAiApiKey.
   ///

@@ -40,7 +40,7 @@ endif()
 # default. In most cases, you should add new options to specific targets instead
 # of modifying this function.
 function(APPLY_STANDARD_SETTINGS TARGET)
-  target_compile_features(${TARGET} PUBLIC cxx_std_14)
+  target_compile_features(${TARGET} PUBLIC cxx_std_17)
   target_compile_options(${TARGET} PRIVATE -Wall -Werror)
   target_compile_options(${TARGET} PRIVATE "$<$<NOT:$<CONFIG:Debug>>:-O3>")
   target_compile_definitions(${TARGET} PRIVATE "$<$<NOT:$<CONFIG:Debug>>:NDEBUG>")
@@ -121,8 +121,46 @@ install(CODE "
 install(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
   DESTINATION "${INSTALL_BUNDLE_DATA_DIR}" COMPONENT Runtime)
 
+set(ICON_THEME_DIR "${INSTALL_BUNDLE_DATA_DIR}/icons/hicolor/256x256/apps")
+install(FILES "${CMAKE_SOURCE_DIR}/../assets/logo.png"
+  DESTINATION "${ICON_THEME_DIR}"
+  RENAME "kzdownloader.png"
+  COMPONENT Runtime)
+
+# Install the .desktop file into the bundle for distribution
+install(FILES "${CMAKE_SOURCE_DIR}/com.le0nz.kzdownloader.desktop"
+  DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
+  COMPONENT Runtime)
+
 # Install the AOT library on non-Debug builds only.
 if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
   install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
     COMPONENT Runtime)
 endif()
+
+# --- Local GNOME integration (install icon + .desktop to user's XDG dirs) ---
+set(XDG_DATA_HOME "$ENV{HOME}/.local/share")
+set(LOCAL_ICON_DIR "${XDG_DATA_HOME}/icons/hicolor/256x256/apps")
+set(LOCAL_APPS_DIR "${XDG_DATA_HOME}/applications")
+
+install(CODE "
+  file(MAKE_DIRECTORY \"${LOCAL_ICON_DIR}\")
+  file(MAKE_DIRECTORY \"${LOCAL_APPS_DIR}\")
+  file(COPY \"${CMAKE_SOURCE_DIR}/../assets/logo.png\"
+       DESTINATION \"${LOCAL_ICON_DIR}\")
+  file(RENAME \"${LOCAL_ICON_DIR}/logo.png\"
+              \"${LOCAL_ICON_DIR}/kzdownloader.png\")
+  # Write .desktop with absolute Exec path pointing to the bundle
+  file(WRITE \"${LOCAL_APPS_DIR}/com.le0nz.kzdownloader.desktop\"
+\"[Desktop Entry]
+Type=Application
+Name=KZ Downloader
+Comment=A beautiful, cross-platform desktop download manager with AI-powered video analysis
+Exec=${CMAKE_INSTALL_PREFIX}/kzdownloader
+Icon=kzdownloader
+Terminal=false
+Categories=Network;FileTransfer;
+StartupWMClass=com.le0nz.kzdownloader
+\")
+  execute_process(COMMAND gtk-update-icon-cache -f -t \"${XDG_DATA_HOME}/icons/hicolor\" ERROR_QUIET)
+  " COMPONENT Runtime)

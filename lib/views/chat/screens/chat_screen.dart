@@ -408,14 +408,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WindowListener {
         decoration: Platform.isMacOS
             ? BoxDecoration(
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   width: 1,
                 ),
                 borderRadius: BorderRadius.circular(10),
               )
             : null,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: Platform.isMacOS ? BorderRadius.circular(10) : BorderRadius.zero,
           child: Stack(
             children: [
               Container(color: Theme.of(context).scaffoldBackgroundColor),

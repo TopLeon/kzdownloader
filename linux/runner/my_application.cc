@@ -1,11 +1,16 @@
 #include "my_application.h"
 
+#include <locale.h>
+#include <filesystem>
 #include <flutter_linux/flutter_linux.h>
 #ifdef GDK_WINDOWING_X11
 #include <gdk/gdkx.h>
 #endif
 
 #include "flutter/generated_plugin_registrant.h"
+
+using namespace std;
+using namespace std::filesystem;
 
 struct _MyApplication {
   GtkApplication parent_instance;
@@ -24,6 +29,22 @@ static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
+
+  const string icon_name = "kzdownloader";
+  path executable_dir = canonical(read_symlink("/proc/self/exe")).parent_path();
+  // Icons are at <bundle_root>/data/icons — executable is at <bundle_root>/kzdownloader
+  path bundle_icons_dir = executable_dir / "data" / "icons";
+  // For debug builds running from intermediates_do_not_run/, find source tree icons
+  path source_icons_dir = executable_dir.parent_path().parent_path().parent_path().parent_path() /
+                          "linux" / "icons";
+
+  GtkIconTheme* icon_theme = gtk_icon_theme_get_default();
+  if (exists(bundle_icons_dir)) {
+    gtk_icon_theme_append_search_path(icon_theme, bundle_icons_dir.c_str());
+  }
+  if (exists(source_icons_dir)) {
+    gtk_icon_theme_append_search_path(icon_theme, source_icons_dir.c_str());
+  }
 
   // Use a header bar when running in GNOME as this is the common style used
   // by applications and is the setup most users will be using (e.g. Ubuntu
@@ -52,9 +73,16 @@ static void my_application_activate(GApplication* application) {
     gtk_window_set_title(window, "kzdownloader");
   }
 
+  gtk_window_set_default_icon_name(icon_name.c_str());
+  gtk_window_set_icon_name(window, icon_name.c_str());
+
   gtk_window_set_default_size(window, 1280, 720);
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
+  
+  // Fix for "Non-C locale detected" crash in audio libraries
+  setlocale(LC_NUMERIC, "C");
+
   fl_dart_project_set_dart_entrypoint_arguments(
       project, self->dart_entrypoint_arguments);
 

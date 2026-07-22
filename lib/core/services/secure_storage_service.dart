@@ -6,6 +6,7 @@ class StorageKeys {
   static const String openAiApiKey = 'openai_api_key';
   static const String googleApiKey = 'google_api_key';
   static const String anthropicApiKey = 'anthropic_api_key';
+  static const String lmStudioApiKey = 'lm_studio_api_key';
 }
 
 // Service for securely reading and writing sensitive data.

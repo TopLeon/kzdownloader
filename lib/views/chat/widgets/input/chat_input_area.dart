@@ -5,6 +5,7 @@ import 'package:kzdownloader/core/download/providers/download_provider.dart';
 import 'package:kzdownloader/core/download/providers/prefetched_metadata.dart';
 import 'package:kzdownloader/views/chat/widgets/input/input_options_panel.dart';
 import 'package:kzdownloader/core/utils/utils.dart';
+import 'package:kzdownloader/core/utils/download_helper.dart';
 import 'package:kzdownloader/models/download_task.dart';
 import 'package:kzdownloader/l10n/arb/app_localizations.dart';
 import 'package:kzdownloader/views/chat/widgets/rainbow.dart';
@@ -85,8 +86,7 @@ class ChatInputArea extends ConsumerStatefulWidget {
   ConsumerState<ChatInputArea> createState() => _ChatInputAreaState();
 }
 
-class _ChatInputAreaState extends ConsumerState<ChatInputArea>
-    with SingleTickerProviderStateMixin {
+class _ChatInputAreaState extends ConsumerState<ChatInputArea> {
   bool _isVideoLink = false;
   String _lastPrefetchedUrl = '';
   int _selectedM3U8VariantIndex = 0;
@@ -100,24 +100,12 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea>
   FocusNode get _activeFocusNode =>
       widget.focusNode ?? (_ownFocusNode ??= FocusNode());
 
-  // For the send button scale animation
-  late final AnimationController _sendBtnController;
-  late final Animation<double> _sendBtnScale;
-
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(_onTextChanged);
     _onTextChanged();
     _activeFocusNode.addListener(_handleFocusChange);
-
-    _sendBtnController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 200),
-    );
-    _sendBtnScale = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _sendBtnController, curve: Curves.easeOutBack),
-    );
   }
 
   @override
@@ -125,7 +113,6 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea>
     widget.controller.removeListener(_onTextChanged);
     _activeFocusNode.removeListener(_handleFocusChange);
     _ownFocusNode?.dispose();
-    _sendBtnController.dispose();
     super.dispose();
   }
 
@@ -237,14 +224,8 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea>
     final currentUrl = widget.controller.text;
     final prefetchedData = prefetchedMap[currentUrl];
 
-    // Drive the send button scale animation
     final shouldShowSend =
         prefetchStatus == PrefetchStatus.ready && currentUrl.isNotEmpty;
-    if (shouldShowSend) {
-      _sendBtnController.forward();
-    } else {
-      _sendBtnController.reverse();
-    }
 
     ref.listen(prefetchStatusProvider, (prev, next) {
       if (next == PrefetchStatus.loading) {
@@ -266,14 +247,14 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea>
         color: Theme.of(context).colorScheme.tertiary,
         borderRadius: BorderRadius.circular(30),
         border: Border.all(
-          color: _isFocused ? colorScheme.primary.withOpacity(0.2) : colorScheme.primary.withOpacity(0.15),
+          color: _isFocused ? colorScheme.primary.withValues(alpha: 0.2) : colorScheme.primary.withValues(alpha: 0.15),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
             color: _isFocused
-                ? colorScheme.shadow.withOpacity(0.10)
-                : colorScheme.shadow.withOpacity(0.05),
+                ? colorScheme.shadow.withValues(alpha: 0.10)
+                : colorScheme.shadow.withValues(alpha: 0.05),
             blurRadius: 20,
             offset: const Offset(0, 2),
           ),
@@ -293,7 +274,7 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea>
                   child: Icon(
                     Icons.link,
                     size: 22,
-                    color: colorScheme.onSurfaceVariant.withOpacity(0.9),
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
                   ),
                 ),
 
@@ -309,7 +290,7 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea>
                         ? l10n.pasteLinkSummaryHint
                         : l10n.pasteLinkHint,
                     hintStyle: GoogleFonts.montserrat(
-                      color: colorScheme.onSurfaceVariant.withOpacity(0.9),
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
                     ),
                     alignLabelWithHint: true,
                     border: InputBorder.none,
@@ -321,47 +302,15 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea>
                   onSubmitted: (_) => widget.onSubmit(),
                 ),
               ),
-
-              // Send Button — spring scale animation
-              ScaleTransition(
-                scale: _sendBtnScale,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOutCubic,
-                  margin: const EdgeInsets.only(right: 4),
-                  decoration: BoxDecoration(
-                    color: shouldShowSend
-                        ? colorScheme.primary
-                        : colorScheme.primary.withOpacity(0.55),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    onPressed: widget.onSubmit,
-                    icon: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      transitionBuilder: (child, anim) => FadeTransition(
-                        opacity: anim,
-                        child: ScaleTransition(scale: anim, child: child),
-                      ),
-                      child: FIcon(
-                        widget.summarizeOnly
-                            ? RI.RiBardLine
-                            : RI.RiDownloadLine,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        key: ValueKey(widget.summarizeOnly),
-                        size: 20,
-                      ),
-                    ),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      padding: const EdgeInsets.all(10),
-                      elevation: 0,
-                    ),
-                  ),
-                ),
-              ),
+              const SizedBox(width: 12),
             ],
           ),
+
+          // Compact content info row (thumbnail + title + channel)
+          if (prefetchStatus == PrefetchStatus.ready &&
+              prefetchedData != null &&
+              (prefetchedData.title != null || prefetchedData.thumbnail != null))
+            _buildCompactInfoRow(prefetchedData, colorScheme),
 
           // Loading shimmer / options panel
           AnimatedSwitcher(
@@ -433,14 +382,69 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea>
 
           if (widget.summarizeOnly)
             Padding(
-              padding: const EdgeInsets.only(bottom: 20, left: 12, right: 12),
+              padding: const EdgeInsets.only(bottom: 8, left: 12, right: 12),
               child: Text(
                 l10n.aiNotAvailableForNonYoutube,
                 style:
                     TextStyle(color: Theme.of(context).hintColor, fontSize: 12),
                 textAlign: TextAlign.center,
               ),
-            )
+            ),
+
+          // ── Full-width CTA Download Button ──────────────────────────
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SizeTransition(
+                  sizeFactor: animation,
+                  axisAlignment: -1,
+                  child: child,
+                ),
+              );
+            },
+            child: shouldShowSend
+                ? Padding(
+                    key: const ValueKey('cta-download'),
+                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: widget.onSubmit,
+                        icon: FIcon(
+                          widget.summarizeOnly
+                              ? RI.RiBardLine
+                              : RI.RiDownloadLine,
+                          color: colorScheme.onPrimary,
+                          size: 18,
+                        ),
+                        label: Text(
+                          widget.summarizeOnly
+                              ? l10n.modeSummary
+                              : l10n.actionDownload,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: colorScheme.onPrimary,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          foregroundColor: colorScheme.onPrimary,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(key: ValueKey('cta-empty')),
+          ),
         ],
       ),
     );
@@ -483,7 +487,7 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea>
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: cs.tertiary,
-        border: Border.all(color: cs.primary.withOpacity(0.15)),
+        border: Border.all(color: cs.primary.withValues(alpha: 0.15)),
         borderRadius: BorderRadius.circular(20),
       ),
       child: IntrinsicWidth(
@@ -505,7 +509,7 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea>
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: cs.primary.withOpacity(0.25),
+                        color: cs.primary.withValues(alpha: 0.25),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -544,7 +548,7 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea>
       key: key,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Divider(height: 1, color: cs.outlineVariant.withOpacity(0.4)),
+        Divider(height: 1, color: cs.outlineVariant.withValues(alpha: 0.4)),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 18),
           child: Row(
@@ -628,13 +632,230 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea>
               Icon(
                 Icons.keyboard_arrow_down_rounded,
                 size: 16,
-                color: colorScheme.onSurfaceVariant.withOpacity(0.9),
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  // ── Compact info row (thumbnail 72×72 + title + channel) ────────────────
+
+  Widget _buildCompactInfoRow(PrefetchedData data, ColorScheme colorScheme) {
+    final thumbnailUrl = data.thumbnail;
+    final title = data.title;
+    final channel = data.channel;
+    final durationSecs = data.duration;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Thumbnail (72×72) with optional duration badge
+          if (thumbnailUrl != null && thumbnailUrl.isNotEmpty)
+            SizedBox(
+              width: 72,
+              height: 72,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        thumbnailUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHighest
+                                .withValues(alpha: 0.3),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            Icons.image_not_supported_outlined,
+                            size: 24,
+                            color: colorScheme.onSurfaceVariant
+                                .withValues(alpha: 0.3),
+                          ),
+                        ),
+                        loadingBuilder: (_, child, progress) {
+                          if (progress == null) return child;
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: colorScheme.surfaceContainerHighest
+                                  .withValues(alpha: 0.3),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            alignment: Alignment.center,
+                            child: SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 1.5,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  colorScheme.primary.withValues(alpha: 0.5),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  // Duration badge
+                  if (durationSecs != null && durationSecs > 0)
+                    Positioned(
+                      bottom: 4,
+                      right: 4,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.7),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          _formatDuration(durationSecs),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+          if (thumbnailUrl != null && thumbnailUrl.isNotEmpty)
+            const SizedBox(width: 12),
+
+          // Title + Channel
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (title != null && title.isNotEmpty)
+                  Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                      height: 1.3,
+                    ),
+                  ),
+                if (channel != null && channel.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      // Mini channel avatar (first letter)
+                      Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary.withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          channel[0].toUpperCase(),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          channel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                      // Playlist badge
+                      if (data.isPlaylist &&
+                          data.videoCount != null &&
+                          data.videoCount! > 0) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.playlist_play_rounded,
+                                size: 12,
+                                color: colorScheme.primary,
+                              ),
+                              const SizedBox(width: 3),
+                              Text(
+                                '${data.videoCount!} videos',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+                // Generic file info (for non-video URLs)
+                if (channel == null &&
+                    title != null &&
+                    data.headMeta != null &&
+                    data.headMeta!.size > 0) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    DownloadHelper.formatBytes(data.headMeta!.size),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 11,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDuration(int seconds) {
+    final h = seconds ~/ 3600;
+    final m = (seconds % 3600) ~/ 60;
+    final s = seconds % 60;
+    if (h > 0) {
+      return '$h:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+    }
+    return '$m:${s.toString().padLeft(2, '0')}';
   }
 }
 

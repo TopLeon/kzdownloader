@@ -193,7 +193,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
 
   Widget _buildDivider(ColorScheme cs) => Divider(
         height: 1,
-        color: cs.outlineVariant.withOpacity(0.4),
+        color: cs.outlineVariant.withValues(alpha: 0.4),
       );
 
   // ── Generic download options (checksum + optional M3U8 variants) ────────
@@ -213,10 +213,10 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
                   closedFillColor: cs.surface,
                   expandedFillColor: cs.surface,
                   closedBorder: Border.all(
-                    color: cs.outlineVariant.withOpacity(0.3),
+                    color: cs.outlineVariant.withValues(alpha: 0.3),
                   ),
                   expandedBorder: Border.all(
-                    color: cs.primary.withOpacity(0.15),
+                    color: cs.primary.withValues(alpha: 0.15),
                   ),
                   closedBorderRadius: BorderRadius.circular(12),
                   expandedBorderRadius: BorderRadius.circular(12),
@@ -247,7 +247,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
                   color: cs.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: cs.outlineVariant.withOpacity(0.3),
+                    color: cs.outlineVariant.withValues(alpha: 0.3),
                   ),
                 ),
                 child: TextField(
@@ -292,7 +292,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
       decoration: BoxDecoration(
         color: cs.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cs.outlineVariant.withOpacity(0.3)),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -369,7 +369,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
       decoration: BoxDecoration(
         color: cs.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cs.outlineVariant.withOpacity(0.3)),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -422,7 +422,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
       decoration: BoxDecoration(
         color: cs.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cs.outlineVariant.withOpacity(0.3)),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -477,7 +477,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
               ],
             ),
           ),
-          Divider(height: 1, color: cs.outlineVariant.withOpacity(0.3)),
+          Divider(height: 1, color: cs.outlineVariant.withValues(alpha: 0.3)),
           ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 200),
             child: ListView.builder(
@@ -528,7 +528,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
                             size: 18,
                             color: isChecked
                                 ? cs.primary
-                                : cs.onSurfaceVariant.withOpacity(0.5),
+                                : cs.onSurfaceVariant.withValues(alpha: 0.5),
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -536,7 +536,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
                           '${idx + 1}',
                           style: GoogleFonts.montserrat(
                             fontSize: 11,
-                            color: cs.onSurfaceVariant.withOpacity(0.6),
+                            color: cs.onSurfaceVariant.withValues(alpha: 0.6),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -550,7 +550,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
                               fontSize: 12,
                               color: isChecked
                                   ? cs.onSurface
-                                  : cs.onSurfaceVariant.withOpacity(0.7),
+                                  : cs.onSurfaceVariant.withValues(alpha: 0.7),
                               fontWeight: isChecked
                                   ? FontWeight.w500
                                   : FontWeight.normal,
@@ -563,7 +563,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
                             _formatDuration(durationSecs),
                             style: GoogleFonts.montserrat(
                               fontSize: 11,
-                              color: cs.onSurfaceVariant.withOpacity(0.5),
+                              color: cs.onSurfaceVariant.withValues(alpha: 0.5),
                             ),
                           ),
                         ],
@@ -585,7 +585,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
       decoration: BoxDecoration(
         color: cs.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cs.outlineVariant.withOpacity(0.3)),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -619,7 +619,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
               child: Icon(
                 Icons.keyboard_arrow_down_rounded,
                 size: 16,
-                color: cs.onSurfaceVariant.withOpacity(0.6),
+                color: cs.onSurfaceVariant.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(width: 4),
@@ -628,7 +628,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
               style: GoogleFonts.montserrat(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color: cs.onSurfaceVariant.withOpacity(0.7),
+                color: cs.onSurfaceVariant.withValues(alpha: 0.7),
               ),
             ),
             if (widget.advancedDownloadPath != null ||
@@ -658,7 +658,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
       decoration: BoxDecoration(
         color: cs.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cs.outlineVariant.withOpacity(0.3)),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -708,7 +708,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
                             'Using global default',
                             style: GoogleFonts.montserrat(
                               fontSize: 10,
-                              color: cs.onSurfaceVariant.withOpacity(0.5),
+                              color: cs.onSurfaceVariant.withValues(alpha: 0.5),
                             ),
                           ),
                       ],
@@ -726,7 +726,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
                             child: Icon(
                               Icons.close_rounded,
                               size: 14,
-                              color: cs.onSurfaceVariant.withOpacity(0.5),
+                              color: cs.onSurfaceVariant.withValues(alpha: 0.5),
                             ),
                           ),
                         ),
@@ -734,7 +734,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: cs.primaryContainer.withOpacity(0.6),
+                          color: cs.primaryContainer.withValues(alpha: 0.6),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -753,7 +753,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
             ),
           ),
 
-          Divider(height: 1, color: cs.outlineVariant.withOpacity(0.25)),
+          Divider(height: 1, color: cs.outlineVariant.withValues(alpha: 0.25)),
 
           // ── Speed limit ──────────────────────────────────────────
           Padding(
@@ -795,7 +795,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
                       hintText: '∞',
                       hintStyle: GoogleFonts.montserrat(
                         fontSize: 13,
-                        color: cs.onSurfaceVariant.withOpacity(0.4),
+                        color: cs.onSurfaceVariant.withValues(alpha: 0.4),
                       ),
                       border: InputBorder.none,
                       isDense: true,
@@ -813,7 +813,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
                   'KB/s',
                   style: GoogleFonts.montserrat(
                     fontSize: 11,
-                    color: cs.onSurfaceVariant.withOpacity(0.6),
+                    color: cs.onSurfaceVariant.withValues(alpha: 0.6),
                   ),
                 ),
                 if (widget.advancedSpeedLimitKbps != null &&
@@ -827,7 +827,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
                     child: Icon(
                       Icons.close_rounded,
                       size: 14,
-                      color: cs.onSurfaceVariant.withOpacity(0.5),
+                      color: cs.onSurfaceVariant.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -848,7 +848,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
       decoration: BoxDecoration(
         color: cs.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cs.outlineVariant.withOpacity(0.3)),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -926,7 +926,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
       decoration: BoxDecoration(
         color: cs.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cs.outlineVariant.withOpacity(0.3)),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: displayOptions.map((opt) {
@@ -959,7 +959,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
       decoration: BoxDecoration(
         color: cs.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: cs.outlineVariant.withOpacity(0.3)),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1058,7 +1058,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
           boxShadow: active
               ? [
                   BoxShadow(
-                    color: cs.shadow.withOpacity(0.06),
+                    color: cs.shadow.withValues(alpha: 0.06),
                     blurRadius: 12,
                     offset: const Offset(0, 2),
                   )
@@ -1114,7 +1114,7 @@ class _InputOptionsPanelState extends State<InputOptionsPanel>
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: cs.shadow.withOpacity(0.06),
+                    color: cs.shadow.withValues(alpha: 0.06),
                     blurRadius: 12,
                     offset: const Offset(0, 2),
                   )
@@ -1190,8 +1190,8 @@ class _StepperButton extends StatelessWidget {
         height: 28,
         decoration: BoxDecoration(
           color: enabled
-              ? colorScheme.primaryContainer.withOpacity(0.6)
-              : colorScheme.onSurface.withOpacity(0.06),
+              ? colorScheme.primaryContainer.withValues(alpha: 0.6)
+              : colorScheme.onSurface.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
@@ -1199,7 +1199,7 @@ class _StepperButton extends StatelessWidget {
           size: 16,
           color: enabled
               ? colorScheme.primary
-              : colorScheme.onSurface.withOpacity(0.25),
+              : colorScheme.onSurface.withValues(alpha: 0.25),
         ),
       ),
     );

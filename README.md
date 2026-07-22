@@ -47,10 +47,12 @@ The design is modern, minimal, and fully reactive, featuring animated neon gradi
 - Built on a Rust-based HTTP backend ([rhttp_plus](https://pub.dev/packages/rhttp_plus)) for maximum throughput and **TLS fingerprinting** to avoid bot-detection on protected servers.
 
 ### 🤖 Video Summaries & Chat
-- Automatically fetch the **transcript / description** of a YouTube video and generate a structured summary using an LLM.
+- Automatically fetch the **transcript** (or description) of a YouTube video and generate a structured summary using an LLM.
 - Ask **follow-up questions** in a persistent chat session tied to the video — Q&A history is saved locally.
+- **100% Local AI Capabilities**: Perform complete video analysis and chat offline with absolute privacy.
 - Support for multiple AI providers:
   - **Ollama** (fully local, no data leaves the machine)
+  - **LM Studio** (fully local, OpenAI-compatible local server)
   - **OpenAI** (need API key)
   - **Google Gemini** (need API key)
 - Streaming text output with animated Markdown rendering.
@@ -80,19 +82,6 @@ The design is modern, minimal, and fully reactive, featuring animated neon gradi
 - Glassmorphism glow blobs on the home screen and smooth CSS-style transitions throughout.
 - Responsive layout with separate view adaptations for Windows/Linux and macOS.
 
-## 🕹️ Demo
-
-
-https://github.com/user-attachments/assets/024d8e8c-fddb-4685-95f1-4b4d1f3212e6
-
-
-
-## ⬇️ Download
-
-Pre-compiled binaries for Windows and macOS are available directly in the [**Releases**](../../releases) section — no build environment needed.
-
-> ⚠️ macOS Users: Since the app is currently self-signed, Gatekeeper will block it on first launch. To run it, Right-click the app, select Open, and then click Open again in the dialog box.
-
 ## 🏗️ Architecture & Tech Stack
 
 | Layer | Technology |
@@ -120,13 +109,53 @@ KZDownloader automatically downloads and manages the following external tools in
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### ⬇️ Download
+
+Pre-compiled binaries for Windows and macOS are available directly in the [**Releases**](../../releases) section — no build environment needed.
+
+> ⚠️ macOS Users: Since the app is currently self-signed, Gatekeeper will block it on first launch. To run it, Right-click the app, select Open, and then click Open again in the dialog box.
+
+### Build Process
+
+#### Prerequisites
 
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) ≥ 3.2.0
 - Dart SDK ≥ 3.2.0
 - A desktop target configured (`flutter config --enable-windows-desktop` / `--enable-macos-desktop` / `--enable-linux-desktop`)
 
-### Installation
+#### Linux Only
+
+If you are compiling this Flutter application on Linux (Ubuntu), you need to configure your environment correctly to avoid build failures with native plugins (such as `rhttp_plus` and `flutter_secure_storage`).
+
+##### 1. Avoid Flutter via Snap
+The Snap installation of Flutter runs in an isolated container and causes `glibc` library mismatches when compiling native Rust/C++ dependencies. 
+If you installed Flutter via Snap, remove it and use the standalone repository clone instead:
+```bash
+sudo snap remove flutter
+git clone https://github.com/flutter/flutter.git -b stable ~/.flutter
+export PATH="$PATH:$HOME/.flutter/bin"
+
+```
+
+##### 2. Install Required System Dependencies
+
+The project relies on native compilation tools, window manager libraries, Rust, and the GNOME Secret Service API. Install them using `apt` and `rustup`:
+
+```bash
+# Build tools, GTK development files, and Secret Service headers
+sudo apt update
+sudo apt install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev
+
+# Install Rust toolchain (required for rhttp_plus)
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+
+# Install libmpv for media_kit
+sudo apt install libmpv-dev mpv
+
+```
+
+#### Clone & Run
 
 ```bash
 # Clone the repository

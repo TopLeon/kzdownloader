@@ -8,7 +8,7 @@ import 'package:langchain_ollama/langchain_ollama.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:langchain_google/langchain_google.dart';
 
-enum LlmProvider { ollama, openai, google }
+enum LlmProvider { ollama, openai, google, lmstudio }
 
 // Represents basic information about an AI model.
 class OllamaModelInfo {
@@ -49,6 +49,7 @@ class LlmService {
   String? _selectedModelName;
   LlmProvider _activeProvider = LlmProvider.ollama;
   String? _apiKey;
+  String _lmStudioBaseUrl = 'http://localhost:1234/v1';
 
   // Request queue to handle concurrent requests sequentially.
   final Queue<_QueuedRequest> _requestQueue = Queue<_QueuedRequest>();
@@ -71,8 +72,15 @@ class LlmService {
     debugPrint("🤖 [LlmService] Provider set: ${_activeProvider.name}");
   }
 
+  // Sets the LM Studio server base URL.
+  void setLmStudioBaseUrl(String url) {
+    _lmStudioBaseUrl = url;
+    debugPrint("🤖 [LlmService] LM Studio base URL set: $_lmStudioBaseUrl");
+  }
+
   String? get currentModel => _selectedModelName;
   LlmProvider get currentProvider => _activeProvider;
+  String get lmStudioBaseUrl => _lmStudioBaseUrl;
 
   // Checks if Ollama is installed and running.
   Future<bool> isOllamaAvailable() async {
@@ -90,6 +98,33 @@ class LlmService {
     }
   }
 
+  // Checks if LM Studio is running and reachable.
+  Future<bool> isLmStudioAvailable() async {
+    try {
+      final client = HttpClient();
+      client.connectionTimeout = const Duration(seconds: 2);
+
+      final modelsUrl = _getLmStudioModelsUrl();
+      final request = await client.getUrl(Uri.parse(modelsUrl));
+      if (_apiKey != null && _apiKey!.isNotEmpty) {
+        request.headers.set('Authorization', 'Bearer $_apiKey');
+      }
+      final response = await request.close();
+
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Derives the LM Studio /api/v1/models URL from the base URL.
+  // Base URL is typically http://localhost:1234/v1 (for OpenAI-compatible chat),
+  // but the models listing endpoint is at /api/v1/models.
+  String _getLmStudioModelsUrl() {
+    final baseUri = Uri.parse(_lmStudioBaseUrl);
+    return '${baseUri.scheme}://${baseUri.host}:${baseUri.port}/api/v1/models';
+  }
+
   // Fetches the list of available models.
   Future<List<OllamaModelInfo>> fetchAvailableModels() async {
     if (_activeProvider == LlmProvider.openai) {
@@ -99,6 +134,64 @@ class LlmService {
         OllamaModelInfo(name: 'gpt-4o', size: '-', details: 'OpenAI'),
         OllamaModelInfo(name: 'gpt-4o-mini', size: '-', details: 'OpenAI'),
       ];
+    }
+
+    if (_activeProvider == LlmProvider.lmstudio) {
+      try {
+        final client = HttpClient();
+        client.connectionTimeout = const Duration(seconds: 3);
+
+        final modelsUrl = _getLmStudioModelsUrl();
+        final request = await client.getUrl(Uri.parse(modelsUrl));
+        if (_apiKey != null && _apiKey!.isNotEmpty) {
+          request.headers.set('Authorization', 'Bearer $_apiKey');
+        }
+        final response = await request.close();
+
+        if (response.statusCode != 200) {
+          throw Exception("LM Studio API error: ${response.statusCode}");
+        }
+
+        final jsonString = await response.transform(utf8.decoder).join();
+        final data = jsonDecode(jsonString);
+
+        List<OllamaModelInfo> models = [];
+        // LM Studio native API format: { "models": [ { "key": "...", "display_name": "...", "type": "llm"|"embedding", ... } ] }
+        if (data is Map && data['models'] is List) {
+          for (var m in data['models']) {
+            // Only include LLM models, skip embedding models
+            if (m['type'] != 'llm') continue;
+
+            final String modelKey = m['key'] ?? '';
+            if (modelKey.isEmpty) continue;
+
+            final String displayName = m['display_name'] ?? modelKey;
+            final int sizeBytes = m['size_bytes'] ?? 0;
+            final String? paramsString = m['params_string'];
+
+            String sizeInfo = '-';
+            if (paramsString != null && paramsString.isNotEmpty) {
+              sizeInfo = paramsString;
+              if (sizeBytes > 0) {
+                final sizeGb = (sizeBytes / (1024 * 1024 * 1024)).toStringAsFixed(1);
+                sizeInfo = '$paramsString · ${sizeGb} GB';
+              }
+            } else if (sizeBytes > 0) {
+              sizeInfo = '${(sizeBytes / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
+            }
+
+            models.add(OllamaModelInfo(
+              name: modelKey,
+              size: sizeInfo,
+              details: displayName,
+            ));
+          }
+        }
+        return models;
+      } catch (e) {
+        throw Exception(
+            "Unable to connect to LM Studio. Make sure the server is running at $_lmStudioBaseUrl");
+      }
     }
 
     if (_activeProvider == LlmProvider.google) {
@@ -242,6 +335,16 @@ class LlmService {
             model: _selectedModelName!,
             temperature: 0.7,
             numCtx: 4096,
+          ),
+        );
+
+      case LlmProvider.lmstudio:
+        return ChatOpenAI(
+          apiKey: (_apiKey != null && _apiKey!.isNotEmpty) ? _apiKey! : 'lm-studio',
+          baseUrl: _lmStudioBaseUrl,
+          defaultOptions: ChatOpenAIOptions(
+            model: _selectedModelName!,
+            temperature: 0.7,
           ),
         );
     }

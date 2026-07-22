@@ -975,7 +975,7 @@ class IDMDownloader {
         remainingList.fold<int>(0, (s, r) => s + r) / activeWorkers.length;
 
     const int minSplitThreshold = 20 * 1024 * 1024; // 20 MB
-    final double slowFactor = 2.0;
+    const double slowFactor = 2.0;
 
     for (var w in activeWorkers) {
       if (_workers.length >= _maxTotalSegments) break;

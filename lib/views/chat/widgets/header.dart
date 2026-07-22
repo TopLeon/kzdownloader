@@ -27,7 +27,7 @@ class SectionHeader extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        Divider(color: colorScheme.outlineVariant.withOpacity(0.5)),
+        Divider(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
       ],
     );
   }

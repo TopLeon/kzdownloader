@@ -118,7 +118,7 @@ class _AiButtonState extends State<AiButton>
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme.surface;
     final staticBorderColor =
-        Theme.of(context).colorScheme.primary.withOpacity(0.15);
+        Theme.of(context).colorScheme.primary.withValues(alpha: 0.15);
 
     return MouseRegion(
       onEnter: (event) => setState(() {
@@ -408,7 +408,7 @@ class _NeonProgressBarState extends State<NeonProgressBar>
   @override
   Widget build(BuildContext context) {
     final bgColor = widget.backgroundColor ??
-        Theme.of(context).colorScheme.primary.withOpacity(0.15);
+        Theme.of(context).colorScheme.primary.withValues(alpha: 0.15);
     return SizedBox(
       height: widget.height,
       width: double.infinity,

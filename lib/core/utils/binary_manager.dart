@@ -168,6 +168,9 @@ class BinaryManager {
     } else if (Platform.isMacOS) {
       url = 'https://evermeet.cx/ffmpeg/ffmpeg-6.0.zip';
       archiveName = 'ffmpeg.zip';
+    } else if (Platform.isLinux) {
+      url = 'https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz';
+      archiveName = 'ffmpeg.tar.xz';
     } else {
       return;
     }
@@ -180,6 +183,22 @@ class BinaryManager {
         if (total != -1 && onProgress != null) onProgress(received / total);
       },
     );
+
+    if (Platform.isLinux) {
+      await Process.run('tar', ['-xf', archivePath, '-C', binDir]);
+      final extractedDir = Directory(p.join(binDir, 'ffmpeg-master-latest-linux64-gpl'));
+      final extractedFfmpeg = File(p.join(extractedDir.path, 'bin', 'ffmpeg'));
+      if (await extractedFfmpeg.exists()) {
+        final ffmpegPath = await getFfmpegPath();
+        await extractedFfmpeg.copy(ffmpegPath);
+        await _setExecutablePermission(ffmpegPath);
+      }
+      try {
+        if (await extractedDir.exists()) await extractedDir.delete(recursive: true);
+        File(archivePath).deleteSync();
+      } catch (_) {}
+      return;
+    }
 
     final bytes = File(archivePath).readAsBytesSync();
     final archive = ZipDecoder().decodeBytes(bytes);

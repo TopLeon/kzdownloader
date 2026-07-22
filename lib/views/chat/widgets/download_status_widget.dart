@@ -82,13 +82,12 @@ class DownloadStatusWidget extends ConsumerWidget {
         ? null
         : speedStrings.length == 1
             ? speedStrings.first
-            : DownloadHelper.formatBytes(
+            : '${DownloadHelper.formatBytes(
                 speedStrings
                     .map(_parseSpeedToBytes)
                     .fold<double>(0, (a, b) => a + b)
                     .toInt(),
-              ) +
-                '/s';
+              )}/s';
 
     // RAM monitoring
     final memoryAsync = ref.watch(memoryUsageProvider);
@@ -101,7 +100,7 @@ class DownloadStatusWidget extends ConsumerWidget {
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: colorScheme.primary.withOpacity(0.15),
+          color: colorScheme.primary.withValues(alpha: 0.15),
         ),
       ),
       child: Column(
@@ -112,7 +111,7 @@ class DownloadStatusWidget extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: colorScheme.primary.withOpacity(0.1),
+                  color: colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: FIcon(
@@ -167,7 +166,7 @@ class DownloadStatusWidget extends ConsumerWidget {
                   ? 0.0 * 100
                   : status.overallProgress.clamp(0.0, 1.0) * 100,
               size: 3,
-              backgroundColor: colorScheme.primary.withOpacity(0.1),
+              backgroundColor: colorScheme.primary.withValues(alpha: 0.1),
               progressColor: colorScheme.primary,
             ),
           ),
@@ -178,14 +177,14 @@ class DownloadStatusWidget extends ConsumerWidget {
               children: [
                 FIcon(RI.RiSpeedLine,
                     size: 12,
-                    color: colorScheme.onSurfaceVariant.withOpacity(0.6)),
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
                 const SizedBox(width: 4),
                 Text(
                   speedDisplay,
                   style: GoogleFonts.montserrat(
                     fontSize: 9,
                     fontWeight: FontWeight.w500,
-                    color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -198,14 +197,14 @@ class DownloadStatusWidget extends ConsumerWidget {
               children: [
                 FIcon(RI.RiCpuLine,
                     size: 12,
-                    color: colorScheme.onSurfaceVariant.withOpacity(0.6)),
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6)),
                 const SizedBox(width: 4),
                 Text(
                   'RAM: $mb MB • Peak: ${memoryService.peakMb} MB',
                   style: GoogleFonts.montserrat(
                     fontSize: 9,
                     fontWeight: FontWeight.w500,
-                    color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                   ),
                 ),
               ],

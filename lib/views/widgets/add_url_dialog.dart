@@ -100,13 +100,13 @@ class _AddUrlDialogState extends ConsumerState<AddUrlDialog> {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isDark
-                    ? Colors.white.withOpacity(0.1)
-                    : Colors.black.withOpacity(0.05),
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : Colors.black.withValues(alpha: 0.05),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 32,
                   offset: const Offset(0, 16),
                 ),
@@ -119,7 +119,7 @@ class _AddUrlDialogState extends ConsumerState<AddUrlDialog> {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.05),
+                        Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -152,7 +152,7 @@ class _AddUrlDialogState extends ConsumerState<AddUrlDialog> {
                           color: Theme.of(context)
                               .colorScheme
                               .primary
-                              .withOpacity(0.15),
+                              .withValues(alpha: 0.15),
                         ),
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -292,7 +292,7 @@ Future<Map<String, dynamic>?> showAddUrlDialog(
 }) {
   return showDialog<Map<String, dynamic>>(
     context: context,
-    barrierColor: Colors.black.withOpacity(0.4),
+    barrierColor: Colors.black.withValues(alpha: 0.4),
     builder: (context) => AddUrlDialog(category: category),
   );
 }

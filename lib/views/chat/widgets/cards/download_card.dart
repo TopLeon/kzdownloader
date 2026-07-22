@@ -179,13 +179,13 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
         live?['workersProgressJson'] as String? ?? task.workersProgressJson;
 
     final hoverColor = Theme.of(context).brightness == Brightness.dark
-        ? Colors.white.withOpacity(0.05)
-        : Colors.black.withOpacity(0.05);
+        ? Colors.white.withValues(alpha: 0.05)
+        : Colors.black.withValues(alpha: 0.05);
 
     final baseColor = Theme.of(context).scaffoldBackgroundColor;
-    Color borderColor = colorScheme.primary.withOpacity(0.15);
+    Color borderColor = colorScheme.primary.withValues(alpha: 0.15);
     if (task.downloadStatus == WorkStatus.failed) {
-      borderColor = colorScheme.error.withOpacity(0.5);
+      borderColor = colorScheme.error.withValues(alpha: 0.5);
     }
 
     Widget cardContent = Row(
@@ -227,7 +227,7 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                   boxShadow: [
                     if (widget.isSelected)
                       BoxShadow(
-                        color: colorScheme.shadow.withOpacity(0.05),
+                        color: colorScheme.shadow.withValues(alpha: 0.05),
                         blurRadius: 20,
                         offset: const Offset(0, 2),
                       )
@@ -312,14 +312,14 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                                 if (!widget.isSelected) ...[
                                                   Color.alphaBlend(
                                                           hoverColor, baseColor)
-                                                      .withOpacity(0.0),
+                                                      .withValues(alpha: 0.0),
                                                   Color.alphaBlend(
                                                       hoverColor, baseColor),
                                                   Color.alphaBlend(
                                                       hoverColor, baseColor),
                                                 ] else ...[
                                                   colorScheme.tertiary
-                                                      .withOpacity(0.0),
+                                                      .withValues(alpha: 0.0),
                                                   colorScheme.tertiary,
                                                   colorScheme.tertiary
                                                 ]
@@ -376,8 +376,8 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                                                     context)
                                                                 .colorScheme
                                                                 .primary
-                                                                .withOpacity(
-                                                                    0.15))),
+                                                                .withValues(
+                                                                    alpha: 0.15))),
                                                     backgroundColor:
                                                         Theme.of(context)
                                                             .colorScheme
@@ -402,8 +402,8 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                                               Theme.of(context)
                                                                   .colorScheme
                                                                   .primary
-                                                                  .withOpacity(
-                                                                      0.15))),
+                                                                  .withValues(
+                                                                      alpha: 0.15))),
                                                   backgroundColor:
                                                       Theme.of(context)
                                                           .colorScheme
@@ -443,8 +443,8 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                                                     context)
                                                                 .colorScheme
                                                                 .primary
-                                                                .withOpacity(
-                                                                    0.15))),
+                                                                .withValues(
+                                                                    alpha: 0.15))),
                                                     backgroundColor:
                                                         Theme.of(context)
                                                             .colorScheme
@@ -478,8 +478,8 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                                               Theme.of(context)
                                                                   .colorScheme
                                                                   .primary
-                                                                  .withOpacity(
-                                                                      0.15))),
+                                                                  .withValues(
+                                                                      alpha: 0.15))),
                                                   foregroundColor:
                                                       Theme.of(context)
                                                           .colorScheme
@@ -520,7 +520,7 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                         const Duration(milliseconds: 200),
                                     size: 3,
                                     backgroundColor:
-                                        colorScheme.primary.withOpacity(0.15),
+                                        colorScheme.primary.withValues(alpha: 0.15),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
@@ -592,7 +592,7 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Column(
@@ -627,10 +627,10 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                 animatedDuration:
                                     const Duration(milliseconds: 200),
                                 backgroundColor: isDone
-                                    ? colorScheme.primary.withOpacity(0.3)
-                                    : colorScheme.primary.withOpacity(0.15),
+                                    ? colorScheme.primary.withValues(alpha: 0.3)
+                                    : colorScheme.primary.withValues(alpha: 0.15),
                                 progressColor: isDone
-                                    ? colorScheme.primary.withOpacity(0.7)
+                                    ? colorScheme.primary.withValues(alpha: 0.7)
                                     : colorScheme.primary),
                           ),
                         ),
@@ -657,7 +657,7 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                       '... e altri ${workers.length - 6} worker',
                       style: GoogleFonts.montserrat(
                         fontSize: 10,
-                        color: colorScheme.onSurfaceVariant.withOpacity(0.9),
+                        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -799,8 +799,8 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  (fileInfo['color'] as Color).withOpacity(0.2),
-                  (fileInfo['color'] as Color).withOpacity(0.4),
+                  (fileInfo['color'] as Color).withValues(alpha: 0.2),
+                  (fileInfo['color'] as Color).withValues(alpha: 0.4),
                 ],
               ),
             ),
@@ -846,8 +846,8 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.black.withOpacity(0.3),
-                        Colors.black.withOpacity(0.6),
+                        Colors.black.withValues(alpha: 0.3),
+                        Colors.black.withValues(alpha: 0.6),
                       ],
                     ),
                   ),
@@ -873,7 +873,7 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
       child: Center(
         child: FIcon(
           RI.RiVideoOnLine,
-          color: colorScheme.onSurfaceVariant.withOpacity(0.3),
+          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
           size: 32,
         ),
       ),
@@ -907,7 +907,7 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                 painter: _SpeedHistoryPainter(
                   speeds: history,
                   lineColor: colorScheme.primary,
-                  fillColor: colorScheme.primary.withOpacity(0.15),
+                  fillColor: colorScheme.primary.withValues(alpha: 0.15),
                 ),
               ),
             ),

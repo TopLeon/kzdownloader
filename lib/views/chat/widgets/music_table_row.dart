@@ -89,8 +89,8 @@ class _MusicTableRowState extends ConsumerState<MusicTableRow> {
     final canPlay = isCompleted && widget.task.filePath != null;
 
     final hoverColor = Theme.of(context).brightness == Brightness.dark
-        ? Colors.white.withOpacity(0.05)
-        : Colors.black.withOpacity(0.05);
+        ? Colors.white.withValues(alpha: 0.05)
+        : Colors.black.withValues(alpha: 0.05);
 
     final baseColor = Theme.of(context).scaffoldBackgroundColor;
 
@@ -119,7 +119,7 @@ class _MusicTableRowState extends ConsumerState<MusicTableRow> {
                 borderRadius: BorderRadius.circular(16),
                 border: isPlayingRow
                     ? Border.all(
-                        color: widget.colorScheme.primary.withOpacity(0.15),
+                        color: widget.colorScheme.primary.withValues(alpha: 0.15),
                         width: 1,
                       )
                     : null,
@@ -129,7 +129,7 @@ class _MusicTableRowState extends ConsumerState<MusicTableRow> {
                       color: Theme.of(context)
                           .colorScheme
                           .shadow
-                          .withOpacity(0.05),
+                          .withValues(alpha: 0.05),
                       blurRadius: 20,
                       offset: const Offset(0, 2),
                     )
@@ -175,7 +175,7 @@ class _MusicTableRowState extends ConsumerState<MusicTableRow> {
                                         color: !canPlay
                                             ? widget
                                                 .colorScheme.onSurfaceVariant
-                                                .withOpacity(0.5)
+                                                .withValues(alpha: 0.5)
                                             : widget
                                                 .colorScheme.onSurfaceVariant,
                                         fontFeatures: const [
@@ -256,7 +256,7 @@ class _MusicTableRowState extends ConsumerState<MusicTableRow> {
                                     fontWeight: FontWeight.w400,
                                     color: isPlayingRow
                                         ? widget.colorScheme.primary
-                                            .withOpacity(0.7)
+                                            .withValues(alpha: 0.7)
                                         : widget.colorScheme.onSurfaceVariant,
                                   ),
                                 ),

@@ -160,7 +160,7 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
       orElse: () => task,
     );
 
-    final borderColor = Theme.of(context).colorScheme.primary.withOpacity(0.15);
+    final borderColor = Theme.of(context).colorScheme.primary.withValues(alpha: 0.15);
     final primaryColor = colorScheme.primary;
 
     final bool fileExists =
@@ -249,13 +249,13 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                (fileInfo['color'] as Color).withOpacity(0.2),
-                (fileInfo['color'] as Color).withOpacity(0.4),
+                (fileInfo['color'] as Color).withValues(alpha: 0.2),
+                (fileInfo['color'] as Color).withValues(alpha: 0.4),
               ],
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -282,11 +282,11 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               color: isDark
-                  ? Colors.white.withOpacity(0.1)
+                  ? Colors.white.withValues(alpha: 0.1)
                   : Theme.of(context).colorScheme.surfaceContainerHighest,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -317,8 +317,8 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.black.withOpacity(0.3),
-                            Colors.black.withOpacity(0.6),
+                            Colors.black.withValues(alpha: 0.3),
+                            Colors.black.withValues(alpha: 0.6),
                           ],
                         ),
                       ),
@@ -344,13 +344,13 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.dark
-            ? Colors.white.withOpacity(0.1)
+            ? Colors.white.withValues(alpha: 0.1)
             : colorScheme.tertiary,
       ),
       child: Center(
         child: Icon(
           Icons.image_not_supported,
-          color: colorScheme.onSurfaceVariant.withOpacity(0.3),
+          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
           size: 80,
         ),
       ),
@@ -449,7 +449,7 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
           icon: FIcon(
             RI.RiDownloadFill,
             color: fileExists
-                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.38)
+                ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38)
                 : null,
           ),
           label: Text(l10n.modeDownload),
@@ -472,7 +472,7 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
                 ? RI.RiPlayFill
                 : RI.RiExternalLinkLine,
             color: !canPlay
-                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.38)
+                ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.38)
                 : null,
           ),
           label: Text(task.category == TaskCategory.video
@@ -513,7 +513,7 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
                     : Theme.of(context)
                         .colorScheme
                         .onSurface
-                        .withOpacity(0.38))),
+                        .withValues(alpha: 0.38))),
       ),
     ]);
   }
@@ -553,7 +553,7 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
         borderRadius: BorderRadius.circular(16),
         color: Theme.of(context).colorScheme.tertiary,
         border: Border.all(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.15)),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -614,7 +614,7 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
             color: Theme.of(context).scaffoldBackgroundColor,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.15)),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)),
           ),
           child: FIcon(icon, size: 16, color: iconColor),
         ),
@@ -699,7 +699,7 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
                 width: 1),
           ),
           child: Text(l10n.beta,
@@ -722,7 +722,7 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
         borderRadius: BorderRadius.circular(16),
         color: Theme.of(context).colorScheme.tertiary,
         border: Border.all(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.15)),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -849,7 +849,7 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.15)),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)),
           color: Theme.of(context).colorScheme.tertiary,
         ),
         child: Row(
@@ -859,7 +859,7 @@ class MediaDetailPaneState extends ConsumerState<MediaDetailPane> {
               decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: color.withOpacity(0.15), width: 1),
+                border: Border.all(color: color.withValues(alpha: 0.15), width: 1),
               ),
               child: Icon(Icons.chat_bubble_outline, size: 16, color: color),
             ),

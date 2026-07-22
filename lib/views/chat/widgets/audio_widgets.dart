@@ -39,8 +39,8 @@ class _PlaylistCardState extends ConsumerState<PlaylistCard> {
             borderRadius: BorderRadius.circular(16),
             side: BorderSide(
               color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white.withOpacity(0.1)
-                  : Colors.black.withOpacity(0.05),
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : Colors.black.withValues(alpha: 0.05),
               width: 1,
             )),
         title: Text(l10n.renamePlaylist),
@@ -95,7 +95,7 @@ class _PlaylistCardState extends ConsumerState<PlaylistCard> {
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.15)),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15)),
         ),
         child: Material(
           color: Colors.transparent,
@@ -122,7 +122,7 @@ class _PlaylistCardState extends ConsumerState<PlaylistCard> {
                         ),
                         child: Center(
                           child: Icon(Icons.queue_music,
-                              color: Colors.white.withOpacity(0.8), size: 32),
+                              color: Colors.white.withValues(alpha: 0.8), size: 32),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -160,7 +160,7 @@ class _PlaylistCardState extends ConsumerState<PlaylistCard> {
                                   decoration: BoxDecoration(
                                     color: Theme.of(context).brightness ==
                                             Brightness.dark
-                                        ? Colors.white.withOpacity(0.1)
+                                        ? Colors.white.withValues(alpha: 0.1)
                                         : Theme.of(context)
                                             .colorScheme
                                             .surfaceContainerHighest,
@@ -168,7 +168,7 @@ class _PlaylistCardState extends ConsumerState<PlaylistCard> {
                                     border: Border.all(
                                         color: Theme.of(context)
                                             .dividerColor
-                                            .withOpacity(0.1)),
+                                            .withValues(alpha: 0.1)),
                                   ),
                                   child: Text(
                                     l10n.tracksCount(widget
@@ -206,7 +206,7 @@ class _PlaylistCardState extends ConsumerState<PlaylistCard> {
                                       color: Theme.of(context)
                                           .colorScheme
                                           .primary
-                                          .withOpacity(0.15)))),
+                                          .withValues(alpha: 0.15)))),
                         ),
                         const SizedBox(width: 4),
                         IconButton(
@@ -223,7 +223,7 @@ class _PlaylistCardState extends ConsumerState<PlaylistCard> {
                                       color: Theme.of(context)
                                           .colorScheme
                                           .primary
-                                          .withOpacity(0.15)))),
+                                          .withValues(alpha: 0.15)))),
                         ),
                       ],
                     ),
@@ -307,7 +307,7 @@ Widget buildNewMixCard(BuildContext context, Color primaryColor,
       color: Theme.of(context).scaffoldBackgroundColor,
       borderRadius: BorderRadius.circular(16),
       border: Border.all(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
           style: BorderStyle.solid),
     ),
     child: Material(
@@ -322,7 +322,7 @@ Widget buildNewMixCard(BuildContext context, Color primaryColor,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
               ),
               child: Icon(Icons.add, color: primaryColor),
             ),

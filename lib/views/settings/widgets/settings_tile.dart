@@ -101,7 +101,7 @@ class SettingsTile extends StatelessWidget {
         isDestructive ? colorScheme.error : colorScheme.onSurface;
     final iconColor = isDestructive
         ? colorScheme.error
-        : colorScheme.primary.withOpacity(0.8);
+        : colorScheme.primary.withValues(alpha: 0.8);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -117,7 +117,7 @@ class SettingsTile extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: iconColor.withOpacity(0.1),
+                      color: iconColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: IconTheme(
@@ -154,7 +154,7 @@ class SettingsTile extends StatelessWidget {
                 if (type == SettingsTileType.navigation && trailing == null)
                   Icon(
                     Icons.chevron_right_rounded,
-                    color: colorScheme.onSurfaceVariant.withOpacity(0.9),
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
                   ),
               ],
             ),
@@ -168,7 +168,7 @@ class SettingsTile extends StatelessWidget {
             ),
             child: Divider(
               height: 1,
-              color: colorScheme.outlineVariant.withOpacity(0.3),
+              color: colorScheme.outlineVariant.withValues(alpha: 0.3),
             ),
           ),
       ],
@@ -208,10 +208,10 @@ class SettingsSection extends StatelessWidget {
           decoration: BoxDecoration(
             color: colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: colorScheme.primary.withOpacity(0.15)),
+            border: Border.all(color: colorScheme.primary.withValues(alpha: 0.15)),
             boxShadow: [
               BoxShadow(
-                color: colorScheme.shadow.withOpacity(0.05),
+                color: colorScheme.shadow.withValues(alpha: 0.05),
                 blurRadius: 20,
                 offset: const Offset(0, 2),
               )

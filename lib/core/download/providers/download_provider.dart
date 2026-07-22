@@ -620,7 +620,7 @@ class DownloadList extends _$DownloadList {
               if (freeMB < requiredMB) {
                 throw Exception(
                     'Insufficient disk space: ${freeMB.toStringAsFixed(0)} MB free, '
-                    '${requiredMB} MB required');
+                    '$requiredMB MB required');
               }
             }
           } catch (e) {

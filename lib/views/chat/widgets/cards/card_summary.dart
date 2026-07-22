@@ -24,7 +24,7 @@ class CardSummary extends StatelessWidget {
             p: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   height: 1.6,
                   fontSize: 14,
-                  color: colorScheme.onSurface.withOpacity(0.9),
+                  color: colorScheme.onSurface.withValues(alpha: 0.9),
                 ),
             strong: TextStyle(
                 color: colorScheme.primary, fontWeight: FontWeight.w600),

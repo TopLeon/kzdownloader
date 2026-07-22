@@ -53,8 +53,8 @@ class _CategoryHeaderNewState extends ConsumerState<CategoryHeader> {
             const EdgeInsets.only(left: 20, right: 16, top: 10, bottom: 10),
         decoration: BoxDecoration(
           border: Border(
-              bottom: BorderSide(color: colorScheme.primary.withOpacity(0.15))),
-          color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.95),
+              bottom: BorderSide(color: colorScheme.primary.withValues(alpha: 0.15))),
+          color: Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.95),
         ),
         child: Row(
           children: [
@@ -67,7 +67,7 @@ class _CategoryHeaderNewState extends ConsumerState<CategoryHeader> {
                   color: Theme.of(context).colorScheme.tertiary,
                   borderRadius: BorderRadius.circular(16),
                   border:
-                      Border.all(color: colorScheme.primary.withOpacity(0.15)),
+                      Border.all(color: colorScheme.primary.withValues(alpha: 0.15)),
                 ),
                 child: TextField(
                   controller: _searchController,
@@ -77,10 +77,10 @@ class _CategoryHeaderNewState extends ConsumerState<CategoryHeader> {
                   decoration: InputDecoration(
                     hintText: _buildPrompt(context, widget.category),
                     hintStyle: TextStyle(
-                        color: colorScheme.onSurfaceVariant.withOpacity(0.9)),
+                        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.9)),
                     prefixIcon: Icon(
                       Icons.search,
-                      color: colorScheme.onSurfaceVariant.withOpacity(0.9),
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
                       size: 18,
                     ),
                     border: InputBorder.none,
@@ -98,7 +98,7 @@ class _CategoryHeaderNewState extends ConsumerState<CategoryHeader> {
               decoration: BoxDecoration(
                 color: colorScheme.tertiary,
                 border:
-                    Border.all(color: colorScheme.primary.withOpacity(0.15)),
+                    Border.all(color: colorScheme.primary.withValues(alpha: 0.15)),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Material(

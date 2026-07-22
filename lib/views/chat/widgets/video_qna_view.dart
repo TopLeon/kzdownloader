@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -139,7 +140,7 @@ class _VideoQnAViewState extends ConsumerState<VideoQnAView> {
                     color: Theme.of(context)
                         .colorScheme
                         .primary
-                        .withOpacity(0.15)),
+                        .withValues(alpha: 0.15)),
               ),
             ),
             child: Column(
@@ -171,7 +172,7 @@ class _VideoQnAViewState extends ConsumerState<VideoQnAView> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .primary
-                                  .withOpacity(0.3),
+                                  .withValues(alpha: 0.3),
                               width: 1,
                             ),
                             boxShadow: [
@@ -179,7 +180,7 @@ class _VideoQnAViewState extends ConsumerState<VideoQnAView> {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .shadow
-                                    .withOpacity(0.05),
+                                    .withValues(alpha: 0.05),
                                 blurRadius: 20,
                                 offset: const Offset(0, 2),
                               )
@@ -194,7 +195,7 @@ class _VideoQnAViewState extends ConsumerState<VideoQnAView> {
                                 color: Theme.of(context)
                                     .colorScheme
                                     .onSurfaceVariant
-                                    .withOpacity(0.9),
+                                    .withValues(alpha: 0.9),
                               ),
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(
@@ -233,8 +234,7 @@ class _VideoQnAViewState extends ConsumerState<VideoQnAView> {
         fit: StackFit.expand,
         children: [
           ListView(
-              padding: const EdgeInsets.all(24),
-              cacheExtent: 2000,
+              scrollCacheExtent: const ScrollCacheExtent.pixels(2000), padding: const EdgeInsets.all(24),
               children: [
                 Row(
                   children: [
@@ -300,7 +300,7 @@ class _VideoQnAViewState extends ConsumerState<VideoQnAView> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .surfaceContainerHighest
-                                .withOpacity(0.8),
+                                .withValues(alpha: 0.8),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           codeblockPadding: const EdgeInsets.all(12),
@@ -308,7 +308,7 @@ class _VideoQnAViewState extends ConsumerState<VideoQnAView> {
                             color: Theme.of(context)
                                 .colorScheme
                                 .surfaceContainerHighest
-                                .withOpacity(0.5),
+                                .withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(8),
                             border: Border(
                                 left: BorderSide(
@@ -336,7 +336,7 @@ class _VideoQnAViewState extends ConsumerState<VideoQnAView> {
                           color: Theme.of(context)
                               .colorScheme
                               .primary
-                              .withOpacity(0.15))),
+                              .withValues(alpha: 0.15))),
                   color: Theme.of(context).colorScheme.surface,
                 ),
                 child: Row(
@@ -380,9 +380,8 @@ class _VideoQnAViewState extends ConsumerState<VideoQnAView> {
     }
 
     return ListView.builder(
-      key: const ValueKey('ChatList'),
+      scrollCacheExtent: ScrollCacheExtent.pixels(2000), key: const ValueKey('ChatList'),
       controller: _chatScrollController,
-      cacheExtent: 2000,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       itemCount: messages.length,
       itemBuilder: (context, index) {
@@ -423,7 +422,7 @@ class _SuggestionChipsBar extends StatelessWidget {
               ),
               avatar: const SizedBox.shrink(),
               avatarBoxConstraints: BoxConstraints.loose(Size.zero),
-              side: BorderSide(color: colorScheme.primary.withOpacity(0.15)),
+              side: BorderSide(color: colorScheme.primary.withValues(alpha: 0.15)),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
               onPressed: onReportSelected, // Call dedicated function
@@ -437,7 +436,7 @@ class _SuggestionChipsBar extends StatelessWidget {
                 avatar: const SizedBox.shrink(),
                 avatarBoxConstraints: BoxConstraints.loose(Size.zero),
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                side: BorderSide(color: colorScheme.primary.withOpacity(0.15)),
+                side: BorderSide(color: colorScheme.primary.withValues(alpha: 0.15)),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16)),
                 labelStyle: TextStyle(
@@ -476,7 +475,7 @@ class _MessageBubble extends StatelessWidget {
               border: Border.all(
                 color: isUser
                     ? Colors.transparent
-                    : colorScheme.primary.withOpacity(0.15),
+                    : colorScheme.primary.withValues(alpha: 0.15),
                 width: 1,
               ),
               borderRadius: BorderRadius.only(
@@ -528,7 +527,7 @@ class _MessageBubble extends StatelessWidget {
                   color: Theme.of(context)
                       .colorScheme
                       .surfaceContainerHighest
-                      .withOpacity(0.8),
+                      .withValues(alpha: 0.8),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 codeblockPadding: const EdgeInsets.all(12),
@@ -536,7 +535,7 @@ class _MessageBubble extends StatelessWidget {
                   color: Theme.of(context)
                       .colorScheme
                       .surfaceContainerHighest
-                      .withOpacity(0.5),
+                      .withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(8),
                   border: Border(
                       left: BorderSide(

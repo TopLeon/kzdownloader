@@ -529,6 +529,29 @@ class AppLocalizationsIt extends AppLocalizations {
   String get aiProviderGoogle => 'Google AI';
 
   @override
+  String get aiProviderLmStudio => 'LM Studio';
+
+  @override
+  String get lmStudioBaseUrl => 'URL Server LM Studio';
+
+  @override
+  String get lmStudioBaseUrlHint => 'http://localhost:1234/v1';
+
+  @override
+  String get lmStudioApiKey => 'Chiave API (opzionale)';
+
+  @override
+  String get lmStudioApiKeyHint => 'lm-studio';
+
+  @override
+  String get lmStudioDescription =>
+      'API locale, compatibile con OpenAI (GGUF, MLX, etc.)';
+
+  @override
+  String get lmStudioOnboardingSubtitle =>
+      'Inserisci i dettagli del server LM Studio per usare le funzioni AI:';
+
+  @override
   String get openAiApiKey => 'Chiave API OpenAI';
 
   @override

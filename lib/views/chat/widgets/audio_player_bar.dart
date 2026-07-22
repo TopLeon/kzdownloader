@@ -50,11 +50,11 @@ class _AudioPlayerBarState extends ConsumerState<AudioPlayerBar> {
               hovered ? theme.colorScheme.tertiary : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-              color: colorScheme.primary.withOpacity(0.15), width: 1),
+              color: colorScheme.primary.withValues(alpha: 0.15), width: 1),
           boxShadow: [
             if (hovered)
               BoxShadow(
-                color: colorScheme.shadow.withOpacity(0.05),
+                color: colorScheme.shadow.withValues(alpha: 0.05),
                 blurRadius: 20,
                 offset: const Offset(0, 2),
               )
@@ -184,8 +184,8 @@ class _AudioPlayerBarState extends ConsumerState<AudioPlayerBar> {
                     timeLabelLocation: TimeLabelLocation.none,
                     progressBarColor: colorScheme.primary,
                     baseBarColor: hovered
-                        ? colorScheme.primary.withOpacity(0.2)
-                        : colorScheme.primary.withOpacity(0.1),
+                        ? colorScheme.primary.withValues(alpha: 0.2)
+                        : colorScheme.primary.withValues(alpha: 0.1),
                     thumbColor: colorScheme.primary,
                     thumbRadius: 0,
                     thumbGlowRadius: 5,

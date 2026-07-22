@@ -27,9 +27,9 @@ class _StyledInputContainer extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colorScheme.outlineVariant.withOpacity(0.5)),
+        border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
       ),
       child: child,
     );
@@ -67,6 +67,9 @@ class _OllamaModelSelectorState extends ConsumerState<OllamaModelSelector> {
   String? _error;
   String _currentProvider = 'ollama';
   final TextEditingController _apiKeyController = TextEditingController();
+  final TextEditingController _lmStudioUrlController = TextEditingController(
+    text: 'http://localhost:1234/v1',
+  );
   bool _obscureApiKey = true;
   final SettingsService _settingsService = SettingsService();
   int _maxCharactersForAI = 25000;
@@ -93,6 +96,14 @@ class _OllamaModelSelectorState extends ConsumerState<OllamaModelSelector> {
           .read(secureStorageServiceProvider)
           .readSecureData(StorageKeys.googleApiKey);
       if (apiKey != null) _apiKeyController.text = apiKey;
+    } else if (provider == 'lmstudio') {
+      final baseUrl = await _settingsService.getLmStudioBaseUrl();
+      _lmStudioUrlController.text = baseUrl;
+      LlmService().setLmStudioBaseUrl(baseUrl);
+      apiKey = await ref
+          .read(secureStorageServiceProvider)
+          .readSecureData(StorageKeys.lmStudioApiKey);
+      if (apiKey != null) _apiKeyController.text = apiKey;
     }
 
     setState(() {
@@ -112,6 +123,9 @@ class _OllamaModelSelectorState extends ConsumerState<OllamaModelSelector> {
         break;
       case 'google':
         provider = LlmProvider.google;
+        break;
+      case 'lmstudio':
+        provider = LlmProvider.lmstudio;
         break;
       case 'ollama':
       default:
@@ -154,6 +168,11 @@ class _OllamaModelSelectorState extends ConsumerState<OllamaModelSelector> {
             .read(secureStorageServiceProvider)
             .writeSecureData(StorageKeys.googleApiKey, key);
         LlmService().setProvider(LlmProvider.google, apiKey: key);
+      } else if (_currentProvider == 'lmstudio') {
+        await ref
+            .read(secureStorageServiceProvider)
+            .writeSecureData(StorageKeys.lmStudioApiKey, key);
+        LlmService().setProvider(LlmProvider.lmstudio, apiKey: key);
       }
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(AppLocalizations.of(context)!.apiKeySaved),
@@ -189,25 +208,26 @@ class _OllamaModelSelectorState extends ConsumerState<OllamaModelSelector> {
                           decoration: CustomDropdownDecoration(
                               closedFillColor: colorScheme
                                   .surfaceContainerHighest
-                                  .withOpacity(0.3),
+                                  .withValues(alpha: 0.3),
                               expandedFillColor: colorScheme.surface,
                               closedBorder: Border.all(
                                   color: colorScheme.outlineVariant
-                                      .withOpacity(0.5)),
+                                      .withValues(alpha: 0.5)),
                               expandedBorder: Border.all(
-                                  color: colorScheme.primary.withOpacity(0.15)),
+                                  color: colorScheme.primary.withValues(alpha: 0.15)),
                               closedBorderRadius: BorderRadius.circular(8),
                               expandedBorderRadius: BorderRadius.circular(8),
                               listItemDecoration: ListItemDecoration(
                                 splashColor:
-                                    colorScheme.primary.withOpacity(0.05),
+                                    colorScheme.primary.withValues(alpha: 0.05),
                                 highlightColor:
-                                    colorScheme.primary.withOpacity(0.05),
+                                    colorScheme.primary.withValues(alpha: 0.05),
                               )),
                           items: [
                             l10n.aiProviderOllama,
                             l10n.aiProviderOpenAI,
                             l10n.aiProviderGoogle,
+                            l10n.aiProviderLmStudio,
                           ],
                           headerBuilder: (context, selectedItem, enabled) {
                             FIconObject icon;
@@ -215,6 +235,8 @@ class _OllamaModelSelectorState extends ConsumerState<OllamaModelSelector> {
                               icon = RI.RiChatAiFill;
                             } else if (selectedItem == l10n.aiProviderOpenAI) {
                               icon = RI.RiOpenaiFill;
+                            } else if (selectedItem == l10n.aiProviderLmStudio) {
+                              icon = RI.RiComputerFill;
                             } else {
                               icon = RI.RiGeminiFill;
                             }
@@ -233,6 +255,8 @@ class _OllamaModelSelectorState extends ConsumerState<OllamaModelSelector> {
                               icon = RI.RiChatAiLine;
                             } else if (item == l10n.aiProviderOpenAI) {
                               icon = RI.RiOpenaiLine;
+                            } else if (item == l10n.aiProviderLmStudio) {
+                              icon = RI.RiComputerLine;
                             } else {
                               icon = RI.RiGeminiLine;
                             }
@@ -248,14 +272,18 @@ class _OllamaModelSelectorState extends ConsumerState<OllamaModelSelector> {
                               ? l10n.aiProviderOllama
                               : _currentProvider == 'openai'
                                   ? l10n.aiProviderOpenAI
-                                  : l10n.aiProviderGoogle,
+                                  : _currentProvider == 'lmstudio'
+                                      ? l10n.aiProviderLmStudio
+                                      : l10n.aiProviderGoogle,
                           onChanged: (val) async {
                             if (val != null) {
                               final providerValue = val == l10n.aiProviderOllama
                                   ? 'ollama'
                                   : val == l10n.aiProviderOpenAI
                                       ? 'openai'
-                                      : 'google';
+                                      : val == l10n.aiProviderLmStudio
+                                          ? 'lmstudio'
+                                          : 'google';
                               setState(() {
                                 _currentProvider = providerValue;
                               });
@@ -272,6 +300,14 @@ class _OllamaModelSelectorState extends ConsumerState<OllamaModelSelector> {
                                 apiKey = await ref
                                     .read(secureStorageServiceProvider)
                                     .readSecureData(StorageKeys.googleApiKey);
+                                _apiKeyController.text = apiKey ?? '';
+                              } else if (providerValue == 'lmstudio') {
+                                final baseUrl = await _settingsService.getLmStudioBaseUrl();
+                                _lmStudioUrlController.text = baseUrl;
+                                LlmService().setLmStudioBaseUrl(baseUrl);
+                                apiKey = await ref
+                                    .read(secureStorageServiceProvider)
+                                    .readSecureData(StorageKeys.lmStudioApiKey);
                                 _apiKeyController.text = apiKey ?? '';
                               }
 
@@ -340,6 +376,116 @@ class _OllamaModelSelectorState extends ConsumerState<OllamaModelSelector> {
                         ],
                       ),
                     )
+                  else if (_currentProvider == 'lmstudio')
+                    Expanded(
+                      flex: 2,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Base URL field
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _StyledLabel(l10n.lmStudioBaseUrl),
+                                _StyledInputContainer(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 12),
+                                          child: TextField(
+                                            controller: _lmStudioUrlController,
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: l10n.lmStudioBaseUrlHint,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: FIcon(
+                                          RI.RiSaveLine,
+                                          color:
+                                              Theme.of(context).colorScheme.primary,
+                                          size: 20,
+                                        ),
+                                        onPressed: () async {
+                                          final url = _lmStudioUrlController.text.trim();
+                                          if (url.isNotEmpty) {
+                                            await _settingsService.setLmStudioBaseUrl(url);
+                                            LlmService().setLmStudioBaseUrl(url);
+                                            _loadModels('lmstudio');
+                                            if (mounted) {
+                                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                                content: Text(l10n.apiKeySaved),
+                                                backgroundColor: Theme.of(context).colorScheme.surface,
+                                              ));
+                                            }
+                                          }
+                                        },
+                                      ),
+                                      const SizedBox(width: 4),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          // API Key field
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _StyledLabel(l10n.lmStudioApiKey),
+                                _StyledInputContainer(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 12),
+                                          child: TextField(
+                                            controller: _apiKeyController,
+                                            obscureText: _obscureApiKey,
+                                            decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              hintText: l10n.lmStudioApiKeyHint,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: FIcon(
+                                          _obscureApiKey
+                                              ? RI.RiEyeLine
+                                              : RI.RiEyeOffLine,
+                                          color:
+                                              Theme.of(context).colorScheme.primary,
+                                          size: 20,
+                                        ),
+                                        onPressed: () => setState(
+                                            () => _obscureApiKey = !_obscureApiKey),
+                                      ),
+                                      IconButton(
+                                        icon: FIcon(
+                                          RI.RiSaveLine,
+                                          color:
+                                              Theme.of(context).colorScheme.primary,
+                                          size: 20,
+                                        ),
+                                        onPressed: _saveApiKey,
+                                      ),
+                                      const SizedBox(width: 4),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                   else
                     const Spacer(flex: 2),
                 ],
@@ -362,7 +508,7 @@ class _OllamaModelSelectorState extends ConsumerState<OllamaModelSelector> {
                             padding: const EdgeInsets.all(7),
                             decoration: BoxDecoration(
                                 color:
-                                    colorScheme.errorContainer.withOpacity(0.5),
+                                    colorScheme.errorContainer.withValues(alpha: 0.5),
                                 borderRadius: BorderRadius.circular(8)),
                             child: Row(
                               children: [
@@ -401,21 +547,21 @@ class _OllamaModelSelectorState extends ConsumerState<OllamaModelSelector> {
                             decoration: CustomDropdownDecoration(
                                 closedFillColor: colorScheme
                                     .surfaceContainerHighest
-                                    .withOpacity(0.3),
+                                    .withValues(alpha: 0.3),
                                 expandedFillColor: colorScheme.surface,
                                 closedBorder: Border.all(
                                     color: colorScheme.outlineVariant
-                                        .withOpacity(0.5)),
+                                        .withValues(alpha: 0.5)),
                                 expandedBorder: Border.all(
                                     color:
-                                        colorScheme.primary.withOpacity(0.15)),
+                                        colorScheme.primary.withValues(alpha: 0.15)),
                                 closedBorderRadius: BorderRadius.circular(8),
                                 expandedBorderRadius: BorderRadius.circular(8),
                                 listItemDecoration: ListItemDecoration(
                                   splashColor:
-                                      colorScheme.primary.withOpacity(0.05),
+                                      colorScheme.primary.withValues(alpha: 0.05),
                                   highlightColor:
-                                      colorScheme.primary.withOpacity(0.05),
+                                      colorScheme.primary.withValues(alpha: 0.05),
                                 )),
                             hintText: l10n.selectModel,
                             items: _models,
@@ -506,20 +652,20 @@ class _OllamaModelSelectorState extends ConsumerState<OllamaModelSelector> {
                           decoration: CustomDropdownDecoration(
                               closedFillColor: colorScheme
                                   .surfaceContainerHighest
-                                  .withOpacity(0.3),
+                                  .withValues(alpha: 0.3),
                               expandedFillColor: colorScheme.surface,
                               closedBorder: Border.all(
                                   color: colorScheme.outlineVariant
-                                      .withOpacity(0.5)),
+                                      .withValues(alpha: 0.5)),
                               expandedBorder: Border.all(
-                                  color: colorScheme.primary.withOpacity(0.15)),
+                                  color: colorScheme.primary.withValues(alpha: 0.15)),
                               closedBorderRadius: BorderRadius.circular(8),
                               expandedBorderRadius: BorderRadius.circular(8),
                               listItemDecoration: ListItemDecoration(
                                 splashColor:
-                                    colorScheme.primary.withOpacity(0.05),
+                                    colorScheme.primary.withValues(alpha: 0.05),
                                 highlightColor:
-                                    colorScheme.primary.withOpacity(0.05),
+                                    colorScheme.primary.withValues(alpha: 0.05),
                               )),
                           items: const [5000, 25000, 50000, 75000, 100000],
                           initialItem: _maxCharactersForAI,
@@ -660,12 +806,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         _speedGraphEnabled = speedGraphEnabled;
         if (proxyHost.isNotEmpty) _proxyHostController.text = proxyHost;
         if (proxyPort > 0) _proxyPortController.text = proxyPort.toString();
-        if (proxyUsername.isNotEmpty)
+        if (proxyUsername.isNotEmpty) {
           _proxyUsernameController.text = proxyUsername;
-        if (proxyPassword.isNotEmpty)
+        }
+        if (proxyPassword.isNotEmpty) {
           _proxyPasswordController.text = proxyPassword;
-        if (speedLimitBps > 0)
+        }
+        if (speedLimitBps > 0) {
           _speedLimitController.text = (speedLimitBps ~/ 1024).toString();
+        }
         if (customUserAgent != null && customUserAgent.isNotEmpty) {
           _userAgentController.text = customUserAgent;
         }
@@ -728,10 +877,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             _StyledLabel(l10n.downloadPath),
             Container(
               decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                    color: colorScheme.outlineVariant.withOpacity(0.5)),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
               ),
               child: Row(
                 children: [
@@ -759,7 +908,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         border: Border(
                             left: BorderSide(
                                 color: colorScheme.outlineVariant
-                                    .withOpacity(0.3))),
+                                    .withValues(alpha: 0.3))),
                       ),
                       child: FIcon(
                         RI.RiFolderOpenLine,
@@ -791,20 +940,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       CustomDropdown<DownloadFormat>(
                         decoration: CustomDropdownDecoration(
                             closedFillColor: colorScheme.surfaceContainerHighest
-                                .withOpacity(0.3),
+                                .withValues(alpha: 0.3),
                             expandedFillColor: colorScheme.surface,
                             closedBorder: Border.all(
                                 color: colorScheme.outlineVariant
-                                    .withOpacity(0.5)),
+                                    .withValues(alpha: 0.5)),
                             expandedBorder: Border.all(
-                                color: colorScheme.primary.withOpacity(0.15)),
+                                color: colorScheme.primary.withValues(alpha: 0.15)),
                             closedBorderRadius: BorderRadius.circular(8),
                             expandedBorderRadius: BorderRadius.circular(8),
                             listItemDecoration: ListItemDecoration(
                               splashColor:
-                                  colorScheme.primary.withOpacity(0.05),
+                                  colorScheme.primary.withValues(alpha: 0.05),
                               highlightColor:
-                                  colorScheme.primary.withOpacity(0.05),
+                                  colorScheme.primary.withValues(alpha: 0.05),
                             )),
                         items: DownloadFormat.values
                             .where((x) =>
@@ -861,20 +1010,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       CustomDropdown<DownloadFormat>(
                         decoration: CustomDropdownDecoration(
                             closedFillColor: colorScheme.surfaceContainerHighest
-                                .withOpacity(0.3),
+                                .withValues(alpha: 0.3),
                             expandedFillColor: colorScheme.surface,
                             closedBorder: Border.all(
                                 color: colorScheme.outlineVariant
-                                    .withOpacity(0.5)),
+                                    .withValues(alpha: 0.5)),
                             expandedBorder: Border.all(
-                                color: colorScheme.primary.withOpacity(0.15)),
+                                color: colorScheme.primary.withValues(alpha: 0.15)),
                             closedBorderRadius: BorderRadius.circular(8),
                             expandedBorderRadius: BorderRadius.circular(8),
                             listItemDecoration: ListItemDecoration(
                               splashColor:
-                                  colorScheme.primary.withOpacity(0.05),
+                                  colorScheme.primary.withValues(alpha: 0.05),
                               highlightColor:
-                                  colorScheme.primary.withOpacity(0.05),
+                                  colorScheme.primary.withValues(alpha: 0.05),
                             )),
                         items: DownloadFormat.values
                             .where((x) =>
@@ -931,20 +1080,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       CustomDropdown<String>(
                         decoration: CustomDropdownDecoration(
                             closedFillColor: colorScheme.surfaceContainerHighest
-                                .withOpacity(0.3),
+                                .withValues(alpha: 0.3),
                             expandedFillColor: colorScheme.surface,
                             closedBorder: Border.all(
                                 color: colorScheme.outlineVariant
-                                    .withOpacity(0.5)),
+                                    .withValues(alpha: 0.5)),
                             expandedBorder: Border.all(
-                                color: colorScheme.primary.withOpacity(0.15)),
+                                color: colorScheme.primary.withValues(alpha: 0.15)),
                             closedBorderRadius: BorderRadius.circular(8),
                             expandedBorderRadius: BorderRadius.circular(8),
                             listItemDecoration: ListItemDecoration(
                               splashColor:
-                                  colorScheme.primary.withOpacity(0.05),
+                                  colorScheme.primary.withValues(alpha: 0.05),
                               highlightColor:
-                                  colorScheme.primary.withOpacity(0.05),
+                                  colorScheme.primary.withValues(alpha: 0.05),
                             )),
                         items: const [
                           'best',
@@ -1033,20 +1182,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       CustomDropdown<int>(
                         decoration: CustomDropdownDecoration(
                             closedFillColor: colorScheme.surfaceContainerHighest
-                                .withOpacity(0.3),
+                                .withValues(alpha: 0.3),
                             expandedFillColor: colorScheme.surface,
                             closedBorder: Border.all(
                                 color: colorScheme.outlineVariant
-                                    .withOpacity(0.5)),
+                                    .withValues(alpha: 0.5)),
                             expandedBorder: Border.all(
-                                color: colorScheme.primary.withOpacity(0.15)),
+                                color: colorScheme.primary.withValues(alpha: 0.15)),
                             closedBorderRadius: BorderRadius.circular(8),
                             expandedBorderRadius: BorderRadius.circular(8),
                             listItemDecoration: ListItemDecoration(
                               splashColor:
-                                  colorScheme.primary.withOpacity(0.05),
+                                  colorScheme.primary.withValues(alpha: 0.05),
                               highlightColor:
-                                  colorScheme.primary.withOpacity(0.05),
+                                  colorScheme.primary.withValues(alpha: 0.05),
                             )),
                         items: const [1, 2, 3, 4, 5, 6, 8, 10],
                         initialItem: _maxConcurrentDownloads,
@@ -1099,20 +1248,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       CustomDropdown<int>(
                         decoration: CustomDropdownDecoration(
                             closedFillColor: colorScheme.surfaceContainerHighest
-                                .withOpacity(0.3),
+                                .withValues(alpha: 0.3),
                             expandedFillColor: colorScheme.surface,
                             closedBorder: Border.all(
                                 color: colorScheme.outlineVariant
-                                    .withOpacity(0.5)),
+                                    .withValues(alpha: 0.5)),
                             expandedBorder: Border.all(
-                                color: colorScheme.primary.withOpacity(0.15)),
+                                color: colorScheme.primary.withValues(alpha: 0.15)),
                             closedBorderRadius: BorderRadius.circular(8),
                             expandedBorderRadius: BorderRadius.circular(8),
                             listItemDecoration: ListItemDecoration(
                               splashColor:
-                                  colorScheme.primary.withOpacity(0.05),
+                                  colorScheme.primary.withValues(alpha: 0.05),
                               highlightColor:
-                                  colorScheme.primary.withOpacity(0.05),
+                                  colorScheme.primary.withValues(alpha: 0.05),
                             )),
                         items: const [1, 2, 3, 4, 5, 6, 8, 10],
                         initialItem: _maxConcurrentGlobalDownloads,
@@ -1166,20 +1315,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       CustomDropdown<String>(
                         decoration: CustomDropdownDecoration(
                             closedFillColor: colorScheme.surfaceContainerHighest
-                                .withOpacity(0.3),
+                                .withValues(alpha: 0.3),
                             expandedFillColor: colorScheme.surface,
                             closedBorder: Border.all(
                                 color: colorScheme.outlineVariant
-                                    .withOpacity(0.5)),
+                                    .withValues(alpha: 0.5)),
                             expandedBorder: Border.all(
-                                color: colorScheme.primary.withOpacity(0.15)),
+                                color: colorScheme.primary.withValues(alpha: 0.15)),
                             closedBorderRadius: BorderRadius.circular(8),
                             expandedBorderRadius: BorderRadius.circular(8),
                             listItemDecoration: ListItemDecoration(
                               splashColor:
-                                  colorScheme.primary.withOpacity(0.05),
+                                  colorScheme.primary.withValues(alpha: 0.05),
                               highlightColor:
-                                  colorScheme.primary.withOpacity(0.05),
+                                  colorScheme.primary.withValues(alpha: 0.05),
                             )),
                         items: const ['English', 'Italiano'],
                         initialItem: currentLocale?.languageCode == 'it'
@@ -1265,10 +1414,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: colorScheme.outlineVariant.withOpacity(0.5)),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1305,23 +1454,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                                 decoration: CustomDropdownDecoration(
                                     closedFillColor: colorScheme
                                         .surfaceContainerHighest
-                                        .withOpacity(0.3),
+                                        .withValues(alpha: 0.3),
                                     expandedFillColor: colorScheme.surface,
                                     closedBorder: Border.all(
                                         color: colorScheme.outlineVariant
-                                            .withOpacity(0.5)),
+                                            .withValues(alpha: 0.5)),
                                     expandedBorder: Border.all(
                                         color: colorScheme.primary
-                                            .withOpacity(0.15)),
+                                            .withValues(alpha: 0.15)),
                                     closedBorderRadius:
                                         BorderRadius.circular(8),
                                     expandedBorderRadius:
                                         BorderRadius.circular(8),
                                     listItemDecoration: ListItemDecoration(
                                       splashColor:
-                                          colorScheme.primary.withOpacity(0.05),
+                                          colorScheme.primary.withValues(alpha: 0.05),
                                       highlightColor:
-                                          colorScheme.primary.withOpacity(0.05),
+                                          colorScheme.primary.withValues(alpha: 0.05),
                                     )),
                                 items: const ['http', 'socks5'],
                                 initialItem: _proxyType,
@@ -1345,10 +1494,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               _StyledInputContainer(
                                 child: TextField(
                                   controller: _proxyHostController,
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                     hintText: '127.0.0.1',
                                     border: InputBorder.none,
-                                    contentPadding: const EdgeInsets.symmetric(
+                                    contentPadding: EdgeInsets.symmetric(
                                         horizontal: 16, vertical: 12),
                                   ),
                                   style: GoogleFonts.montserrat(fontSize: 13),
@@ -1369,10 +1518,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               _StyledInputContainer(
                                 child: TextField(
                                   controller: _proxyPortController,
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                     hintText: '8080',
                                     border: InputBorder.none,
-                                    contentPadding: const EdgeInsets.symmetric(
+                                    contentPadding: EdgeInsets.symmetric(
                                         horizontal: 16, vertical: 12),
                                   ),
                                   keyboardType: TextInputType.number,
@@ -1474,10 +1623,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                      color: colorScheme.outlineVariant.withOpacity(0.5))),
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.5))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -1523,10 +1672,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                      color: colorScheme.outlineVariant.withOpacity(0.5))),
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.5))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -1547,7 +1696,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       color: colorScheme.surface,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                          color: colorScheme.outlineVariant.withOpacity(0.5)),
+                          color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
                     ),
                     padding: const EdgeInsets.all(4),
                     child: Row(
@@ -1592,10 +1741,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                      color: colorScheme.outlineVariant.withOpacity(0.5))),
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.5))),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -1641,12 +1790,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: colorScheme.errorContainer.withOpacity(
-                      Theme.of(context).brightness == Brightness.dark
+                  color: colorScheme.errorContainer.withValues(
+                      alpha: Theme.of(context).brightness == Brightness.dark
                           ? 0.1
                           : 0.2),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: colorScheme.error.withOpacity(0.3)),
+                  border: Border.all(color: colorScheme.error.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
@@ -1670,7 +1819,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           Text(
                             l10n.clearDownloadHistorySubtitle,
                             style: GoogleFonts.montserrat(
-                              color: colorScheme.error.withOpacity(0.7),
+                              color: colorScheme.error.withValues(alpha: 0.7),
                               fontSize: 13,
                             ),
                           ),
@@ -1678,7 +1827,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                     ),
                     Icon(Icons.chevron_right,
-                        color: colorScheme.error.withOpacity(0.5)),
+                        color: colorScheme.error.withValues(alpha: 0.5)),
                   ],
                 ),
               ),
@@ -1693,7 +1842,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Text(
                     l10n.versionInfo,
                     style: TextStyle(
-                      color: colorScheme.onSurfaceVariant.withOpacity(0.6),
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                       fontSize: 13,
                     ),
                   ),
@@ -1701,7 +1850,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   Text(
                     l10n.copyright,
                     style: TextStyle(
-                      color: colorScheme.onSurfaceVariant.withOpacity(0.4),
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                       fontSize: 13,
                     ),
                   ),
@@ -1742,7 +1891,7 @@ class _ThemeButton extends StatelessWidget {
           color: isSelected ? colorScheme.tertiary : null,
           borderRadius: BorderRadius.circular(8),
           border: isSelected
-              ? Border.all(color: colorScheme.primary.withOpacity(0.15))
+              ? Border.all(color: colorScheme.primary.withValues(alpha: 0.15))
               : null,
         ),
         child: FIcon(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:kzdownloader/views/chat/screens/chat_screen.dart';
 import 'package:kzdownloader/core/utils/binary_manager.dart';
@@ -92,7 +93,7 @@ class StartupScreen extends ConsumerStatefulWidget {
 // =====================================================
 enum _StartupStep { language, aiProvider, aiDetail, downloadPath, progress }
 
-enum _AiChoice { ollama, openai, google, skip }
+enum _AiChoice { ollama, lmstudio, openai, google, skip }
 
 class _StartupScreenState extends ConsumerState<StartupScreen> {
   // ── Step tracking ──────────────────────────────────
@@ -107,6 +108,8 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
   List<OllamaModelInfo> _ollamaModels = [];
   String? _selectedOllamaModel;
   final _apiKeyController = TextEditingController();
+  final _lmStudioUrlController =
+      TextEditingController(text: 'http://localhost:1234/v1');
   bool _obscureApiKey = true;
 
   // ── Download path ──────────────────────────────────
@@ -137,6 +140,7 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
   @override
   void dispose() {
     _apiKeyController.dispose();
+    _lmStudioUrlController.dispose();
     super.dispose();
   }
 
@@ -301,6 +305,41 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
       await settings.setAiModel('gemini-2.5-flash');
       LlmService().setProvider(LlmProvider.google, apiKey: key);
       LlmService().setModel('gemini-2.5-flash');
+    } else if (_aiChoice == _AiChoice.lmstudio) {
+      final url = _lmStudioUrlController.text.trim();
+      final key = _apiKeyController.text.trim();
+      if (url.isEmpty) return;
+
+      await settings.setAiProvider('lmstudio');
+      await settings.setLmStudioBaseUrl(url);
+      LlmService().setLmStudioBaseUrl(url);
+
+      if (key.isNotEmpty) {
+        await ref
+            .read(secureStorageServiceProvider)
+            .writeSecureData(StorageKeys.lmStudioApiKey, key);
+        LlmService().setProvider(LlmProvider.lmstudio, apiKey: key);
+      } else {
+        await ref
+            .read(secureStorageServiceProvider)
+            .deleteSecureData(StorageKeys.lmStudioApiKey);
+        LlmService().setProvider(LlmProvider.lmstudio, apiKey: null);
+      }
+
+      // Try fetching models to pre-select the first one if available
+      setState(() => _aiDetailLoading = true);
+      try {
+        final models = await LlmService().fetchAvailableModels();
+        if (models.isNotEmpty) {
+          await settings.setAiModel(models.first.name);
+          LlmService().setModel(models.first.name);
+        } else {
+          await settings.setAiModel('none');
+        }
+      } catch (_) {
+        await settings.setAiModel('none');
+      }
+      setState(() => _aiDetailLoading = false);
     }
     _goNext();
   }
@@ -356,10 +395,17 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
       apiKey = await ref
           .read(secureStorageServiceProvider)
           .readSecureData(StorageKeys.googleApiKey);
+    } else if (providerStr == 'lmstudio') {
+      apiKey = await ref
+          .read(secureStorageServiceProvider)
+          .readSecureData(StorageKeys.lmStudioApiKey);
+      final baseUrl = await settings.getLmStudioBaseUrl();
+      LlmService().setLmStudioBaseUrl(baseUrl);
     }
     LlmProvider provider = LlmProvider.ollama;
     if (providerStr == 'openai') provider = LlmProvider.openai;
     if (providerStr == 'google') provider = LlmProvider.google;
+    if (providerStr == 'lmstudio') provider = LlmProvider.lmstudio;
     LlmService().setProvider(provider, apiKey: apiKey);
     final model = await settings.selectedAiModel;
     if (model != null && model != 'none' && model != 'skip') {
@@ -372,9 +418,20 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
   // ══════════════════════════════════════════════════
 
   Widget _buildAppBrand(ThemeData theme) {
-    return SizedBox(
-      width: 300,
-      child: Image.asset('assets/logo.png'),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset('assets/kz_tr.png', height: 40),
+        const SizedBox(width: 12),
+        Text(
+          'Downloader',
+          style: GoogleFonts.orbitron(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: theme.colorScheme.onSurface,
+          ),
+        ),
+      ],
     );
   }
 
@@ -420,12 +477,12 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: theme.colorScheme.shadow.withOpacity(0.04),
+            color: theme.colorScheme.shadow.withValues(alpha: 0.04),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -437,22 +494,23 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
 
   Widget _buildStepHeader({
     required ThemeData theme,
-    required IconData icon,
+    IconData? icon,
     required String title,
     required String subtitle,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.primaryContainer.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(14),
+        if (icon != null)
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(icon, color: theme.colorScheme.primary, size: 24),
           ),
-          child: Icon(icon, color: theme.colorScheme.primary, size: 24),
-        ),
         const SizedBox(height: 20),
         Text(
           title,
@@ -492,13 +550,14 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: selected
-              ? theme.colorScheme.primaryContainer.withOpacity(0.25)
-              : theme.colorScheme.surfaceContainerHighest.withOpacity(0.4),
+              ? theme.colorScheme.primaryContainer.withValues(alpha: 0.25)
+              : theme.colorScheme.surfaceContainerHighest
+                  .withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: selected
-                ? theme.colorScheme.primary.withOpacity(0.6)
-                : theme.colorScheme.outlineVariant.withOpacity(0.5),
+                ? theme.colorScheme.primary.withValues(alpha: 0.6)
+                : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -509,7 +568,7 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
               height: 40,
               decoration: BoxDecoration(
                 color: selected
-                    ? theme.colorScheme.primary.withOpacity(0.15)
+                    ? theme.colorScheme.primary.withValues(alpha: 0.15)
                     : theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -590,6 +649,10 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
       child: FilledButton(
         onPressed: enabled && !loading ? onPressed : null,
         style: FilledButton.styleFrom(
+          textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -605,8 +668,6 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
               )
             : Text(
                 label,
-                style:
-                    const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
               ),
       ),
     );
@@ -676,7 +737,6 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
         children: [
           _buildStepHeader(
             theme: theme,
-            icon: Icons.psychology_rounded,
             title: l10n.aiConfiguration,
             subtitle: l10n.configureAiFeatures,
           ),
@@ -687,6 +747,16 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
             description: l10n.ollamaNeedsInstall,
             selected: _aiChoice == _AiChoice.ollama,
             onTap: () => _selectAiChoice(_AiChoice.ollama),
+            badge: 'Free',
+          ),
+          const SizedBox(height: 10),
+          _buildOptionCard(
+            theme: theme,
+            icon: Icons.dns_rounded,
+            title: l10n.aiProviderLmStudio,
+            description: l10n.lmStudioDescription,
+            selected: _aiChoice == _AiChoice.lmstudio,
+            onTap: () => _selectAiChoice(_AiChoice.lmstudio),
             badge: 'Free',
           ),
           const SizedBox(height: 10),
@@ -757,6 +827,8 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
         helpUrl: 'https://aistudio.google.com/app/apikey',
         helpLabel: l10n.getApiKeyGoogle,
       );
+    } else if (_aiChoice == _AiChoice.lmstudio) {
+      return _buildLmStudioDetailStep(theme, l10n);
     }
     return const SizedBox.shrink();
   }
@@ -826,7 +898,7 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
       );
     } else if (_ollamaModels.isEmpty) {
       // Ollama installed but no models — show install command.
-      const defaultModel = 'hf.co/unsloth/gemma-3-4b-it-qat-int4-GGUF:Q4_K_M';
+      const defaultModel = 'gemma4:e4b';
       return _buildCard(
         theme,
         child: Column(
@@ -998,6 +1070,82 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
     );
   }
 
+  Widget _buildLmStudioDetailStep(ThemeData theme, AppLocalizations l10n) {
+    return _buildCard(
+      theme,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildStepHeader(
+            theme: theme,
+            icon: Icons.dns_rounded,
+            title: l10n.aiProviderLmStudio,
+            subtitle: l10n.lmStudioOnboardingSubtitle,
+          ),
+          TextField(
+            controller: _lmStudioUrlController,
+            style: theme.textTheme.bodyMedium,
+            decoration: InputDecoration(
+              hintText: l10n.lmStudioBaseUrlHint,
+              labelText: l10n.lmStudioBaseUrl,
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide:
+                    BorderSide(color: theme.colorScheme.primary, width: 1.5),
+              ),
+              prefixIcon: const Icon(Icons.link_rounded),
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _apiKeyController,
+            obscureText: _obscureApiKey,
+            style:
+                theme.textTheme.bodyMedium?.copyWith(fontFamily: 'monospace'),
+            decoration: InputDecoration(
+              hintText: l10n.lmStudioApiKeyHint,
+              labelText: l10n.lmStudioApiKey,
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide:
+                    BorderSide(color: theme.colorScheme.primary, width: 1.5),
+              ),
+              prefixIcon: const Icon(Icons.key_rounded),
+              suffixIcon: IconButton(
+                icon: Icon(_obscureApiKey
+                    ? Icons.visibility_rounded
+                    : Icons.visibility_off_rounded),
+                onPressed: () =>
+                    setState(() => _obscureApiKey = !_obscureApiKey),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          _buildContinueButton(
+            theme: theme,
+            label: l10n.btnContinue,
+            enabled: true,
+            loading: _aiDetailLoading,
+            onPressed: _continueFromAiDetail,
+          ),
+        ],
+      ),
+    );
+  }
+
   // ── Download path ──────────────────────────────────
 
   Widget _buildDownloadPathStep(ThemeData theme) {
@@ -1021,13 +1169,14 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               color: _downloadPath != null
-                  ? theme.colorScheme.primaryContainer.withOpacity(0.2)
-                  : theme.colorScheme.surfaceContainerHighest.withOpacity(0.4),
+                  ? theme.colorScheme.primaryContainer.withValues(alpha: 0.2)
+                  : theme.colorScheme.surfaceContainerHighest
+                      .withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: _downloadPath != null
-                    ? theme.colorScheme.primary.withOpacity(0.4)
-                    : theme.colorScheme.outlineVariant.withOpacity(0.5),
+                    ? theme.colorScheme.primary.withValues(alpha: 0.4)
+                    : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
                 width: 1,
               ),
             ),
@@ -1116,7 +1265,7 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.errorContainer.withOpacity(0.3),
+                color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Row(
@@ -1153,7 +1302,7 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
           height: 36,
           decoration: BoxDecoration(
             color: done
-                ? theme.colorScheme.primaryContainer.withOpacity(0.5)
+                ? theme.colorScheme.primaryContainer.withValues(alpha: 0.5)
                 : theme.colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(10),
           ),
@@ -1199,7 +1348,7 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
                   valueColor: AlwaysStoppedAnimation<Color>(
                     done
                         ? theme.colorScheme.primary
-                        : theme.colorScheme.primary.withOpacity(0.6),
+                        : theme.colorScheme.primary.withValues(alpha: 0.6),
                   ),
                   minHeight: 5,
                 ),
@@ -1220,7 +1369,7 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
           height: 22,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: Colors.greenAccent.withOpacity(0.15),
+            color: Colors.greenAccent.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
           child: Text(
@@ -1268,7 +1417,7 @@ class _StartupScreenState extends ConsumerState<StartupScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+            padding: const EdgeInsets.only(bottom: 40, left: 24, right: 24),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 520),
               child: Column(

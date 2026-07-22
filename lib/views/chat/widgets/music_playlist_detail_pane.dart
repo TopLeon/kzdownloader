@@ -272,7 +272,7 @@ class _PlaylistDetailPaneState extends ConsumerState<PlaylistDetailPane> {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: Border(
-          left: BorderSide(color: colorScheme.primary.withOpacity(0.15)),
+          left: BorderSide(color: colorScheme.primary.withValues(alpha: 0.15)),
         ),
       ),
       child: Column(
@@ -308,10 +308,10 @@ class _PlaylistDetailPaneState extends ConsumerState<PlaylistDetailPane> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
                         color: isDark
-                            ? Colors.white.withOpacity(0.1)
+                            ? Colors.white.withValues(alpha: 0.1)
                             : colorScheme.surfaceContainerHighest,
                         border: Border.all(
-                          color: colorScheme.primary.withOpacity(0.2),
+                          color: colorScheme.primary.withValues(alpha: 0.2),
                           width: 2,
                         ),
                       ),
@@ -391,13 +391,13 @@ class _PlaylistDetailPaneState extends ConsumerState<PlaylistDetailPane> {
                           padding: const EdgeInsets.only(left: 16),
                           decoration: BoxDecoration(
                             color: _autoplay
-                                ? colorScheme.primary.withOpacity(0.1)
+                                ? colorScheme.primary.withValues(alpha: 0.1)
                                 : colorScheme.tertiary,
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: _autoplay
-                                  ? colorScheme.primary.withOpacity(0.3)
-                                  : colorScheme.primary.withOpacity(0.15),
+                                  ? colorScheme.primary.withValues(alpha: 0.3)
+                                  : colorScheme.primary.withValues(alpha: 0.15),
                             ),
                           ),
                           child: Row(
@@ -469,7 +469,7 @@ class _PlaylistDetailPaneState extends ConsumerState<PlaylistDetailPane> {
                   // Divider
                   if (playlistTracks.isNotEmpty)
                     Divider(
-                      color: colorScheme.outlineVariant.withOpacity(0.5),
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.5),
                     ),
                   const SizedBox(height: 12),
 
@@ -483,7 +483,7 @@ class _PlaylistDetailPaneState extends ConsumerState<PlaylistDetailPane> {
                             RI.RiMusicLine,
                             size: 64,
                             color:
-                                colorScheme.onSurfaceVariant.withOpacity(0.3),
+                                colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -534,13 +534,13 @@ class _PlaylistDetailPaneState extends ConsumerState<PlaylistDetailPane> {
       children: [
         Container(
           color: isDark
-              ? Colors.white.withOpacity(0.1)
+              ? Colors.white.withValues(alpha: 0.1)
               : colorScheme.surfaceContainerHighest,
           child: Center(
             child: FIcon(
               RI.RiPlayListFill,
               size: 64,
-              color: colorScheme.primary.withOpacity(0.3),
+              color: colorScheme.primary.withValues(alpha: 0.3),
             ),
           ),
         ),
@@ -603,16 +603,16 @@ class _TrackItemWidgetState extends State<_TrackItemWidget> {
           color: widget.isPlaying
               ? colorScheme.tertiary
               : _isHovered
-                  ? colorScheme.tertiary.withOpacity(0.5)
+                  ? colorScheme.tertiary.withValues(alpha: 0.5)
                   : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
           border: widget.isPlaying
-              ? Border.all(color: colorScheme.primary.withOpacity(0.15))
+              ? Border.all(color: colorScheme.primary.withValues(alpha: 0.15))
               : null,
           boxShadow: [
             if (widget.isPlaying)
               BoxShadow(
-                color: colorScheme.shadow.withOpacity(0.05),
+                color: colorScheme.shadow.withValues(alpha: 0.05),
                 blurRadius: 20,
                 offset: const Offset(0, 2),
               ),
@@ -651,7 +651,7 @@ class _TrackItemWidgetState extends State<_TrackItemWidget> {
                                   width: 32,
                                   height: 32,
                                   decoration: BoxDecoration(
-                                    color: colorScheme.primary.withOpacity(0.1),
+                                    color: colorScheme.primary.withValues(alpha: 0.1),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Center(
@@ -716,7 +716,7 @@ class _TrackItemWidgetState extends State<_TrackItemWidget> {
                             style: GoogleFonts.montserrat(
                               fontSize: 13,
                               color: widget.isPlaying
-                                  ? colorScheme.primary.withOpacity(0.7)
+                                  ? colorScheme.primary.withValues(alpha: 0.7)
                                   : colorScheme.onSurfaceVariant,
                             ),
                             maxLines: 1,
@@ -796,13 +796,13 @@ class _AddMusicDialogState extends State<_AddMusicDialog> {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: isDark
-                    ? Colors.white.withOpacity(0.1)
-                    : Colors.black.withOpacity(0.05),
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : Colors.black.withValues(alpha: 0.05),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   blurRadius: 32,
                   offset: const Offset(0, 16),
                 ),
@@ -844,7 +844,7 @@ class _AddMusicDialogState extends State<_AddMusicDialog> {
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
                     fillColor: isDark
-                        ? Colors.white.withOpacity(0.05)
+                        ? Colors.white.withValues(alpha: 0.05)
                         : colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -860,7 +860,7 @@ class _AddMusicDialogState extends State<_AddMusicDialog> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
-                      color: colorScheme.primary.withOpacity(0.1),
+                      color: colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -896,7 +896,7 @@ class _AddMusicDialogState extends State<_AddMusicDialog> {
                                 RI.RiSearchLine,
                                 size: 48,
                                 color: colorScheme.onSurfaceVariant
-                                    .withOpacity(0.3),
+                                    .withValues(alpha: 0.3),
                               ),
                               const SizedBox(height: 16),
                               Text(
@@ -919,9 +919,9 @@ class _AddMusicDialogState extends State<_AddMusicDialog> {
                               margin: const EdgeInsets.only(bottom: 8),
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? colorScheme.primary.withOpacity(0.1)
+                                    ? colorScheme.primary.withValues(alpha: 0.1)
                                     : (isDark
-                                        ? Colors.white.withOpacity(0.05)
+                                        ? Colors.white.withValues(alpha: 0.05)
                                         : colorScheme.surfaceContainerHighest),
                                 borderRadius: BorderRadius.circular(12),
                                 border: isSelected
@@ -958,7 +958,7 @@ class _AddMusicDialogState extends State<_AddMusicDialog> {
                                             color: isSelected
                                                 ? colorScheme.primary
                                                 : colorScheme.primary
-                                                    .withOpacity(0.15),
+                                                    .withValues(alpha: 0.15),
                                             width: 2,
                                           ),
                                           borderRadius:

@@ -31,6 +31,7 @@ class SettingsService {
   static const String _keyProxyPassword = 'proxy_password';
   static const String _keyGlobalSpeedLimitBps = 'global_speed_limit_bps';
   static const String _keySpeedGraphEnabled = 'speed_graph_enabled';
+  static const String _keyLmStudioBaseUrl = 'lm_studio_base_url';
 
   // Gets whether summary animations are enabled.
   Future<bool> getSummaryAnimationsEnabled() async {
@@ -285,6 +286,17 @@ class SettingsService {
   Future<void> setSpeedGraphEnabled(bool enabled) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_keySpeedGraphEnabled, enabled);
+  }
+
+  // LM Studio Base URL
+  Future<String> getLmStudioBaseUrl() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyLmStudioBaseUrl) ?? 'http://localhost:1234/v1';
+  }
+
+  Future<void> setLmStudioBaseUrl(String url) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyLmStudioBaseUrl, url.trim());
   }
 }
 

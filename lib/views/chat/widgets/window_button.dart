@@ -20,8 +20,8 @@ class WindowButton extends StatelessWidget {
       hoverColor: isClose
           ? Theme.of(context).colorScheme.error
           : Theme.of(context).brightness == Brightness.light
-              ? Colors.black.withOpacity(0.1)
-              : Colors.white.withOpacity(0.1),
+              ? Colors.black.withValues(alpha: 0.1)
+              : Colors.white.withValues(alpha: 0.1),
       child: Container(
         width: 32,
         height: 16,

@@ -518,13 +518,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aiProvider => 'AI Provider';
 
   @override
-  String get aiProviderOllama => 'Ollama (Local)';
+  String get aiProviderOllama => 'Ollama';
 
   @override
-  String get aiProviderOpenAI => 'OpenAI (Cloud)';
+  String get aiProviderOpenAI => 'OpenAI';
 
   @override
-  String get aiProviderGoogle => 'Google AI (Cloud)';
+  String get aiProviderGoogle => 'Google AI';
+
+  @override
+  String get aiProviderLmStudio => 'LM Studio';
+
+  @override
+  String get lmStudioBaseUrl => 'LM Studio Server URL';
+
+  @override
+  String get lmStudioBaseUrlHint => 'http://localhost:1234/v1';
+
+  @override
+  String get lmStudioApiKey => 'API Key (optional)';
+
+  @override
+  String get lmStudioApiKeyHint => 'lm-studio';
+
+  @override
+  String get lmStudioDescription =>
+      'Local API, OpenAI-compatible (GGUF, MLX, etc.)';
+
+  @override
+  String get lmStudioOnboardingSubtitle =>
+      'Enter your LM Studio server details to use it for AI features:';
 
   @override
   String get openAiApiKey => 'OpenAI API Key';

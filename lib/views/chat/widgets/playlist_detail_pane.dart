@@ -58,13 +58,13 @@ class YouTubePlaylistDetailPane extends ConsumerWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .outlineVariant
-                          .withOpacity(0.5),
+                          .withValues(alpha: 0.5),
                     ),
                     left: BorderSide(
                       color: Theme.of(context)
                           .colorScheme
                           .outlineVariant
-                          .withOpacity(0.5),
+                          .withValues(alpha: 0.5),
                     ),
                   ),
                 ),
@@ -154,7 +154,7 @@ class _PlaylistOverview extends ConsumerWidget {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: Border(
-          left: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.5)),
+          left: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
         ),
       ),
       child: SingleChildScrollView(
@@ -172,11 +172,11 @@ class _PlaylistOverview extends ConsumerWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     color: Theme.brightnessOf(context) == Brightness.dark
-                        ? Colors.white.withOpacity(0.1)
+                        ? Colors.white.withValues(alpha: 0.1)
                         : Theme.of(context).colorScheme.surfaceContainerHighest,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -198,7 +198,7 @@ class _PlaylistOverview extends ConsumerWidget {
                                 RI.RiPlayListLine,
                                 size: 64,
                                 color: colorScheme.onSurfaceVariant
-                                    .withOpacity(0.3),
+                                    .withValues(alpha: 0.3),
                               ),
                             ),
                           ),
@@ -209,8 +209,8 @@ class _PlaylistOverview extends ConsumerWidget {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                Colors.black.withOpacity(0.3),
-                                Colors.black.withOpacity(0.6),
+                                Colors.black.withValues(alpha: 0.3),
+                                Colors.black.withValues(alpha: 0.6),
                               ],
                             ),
                           ),
@@ -372,11 +372,11 @@ class _PlaylistOverview extends ConsumerWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16)),
                   side:
-                      BorderSide(color: colorScheme.primary.withOpacity(0.15)),
+                      BorderSide(color: colorScheme.primary.withValues(alpha: 0.15)),
                 ),
               ),
             Divider(
-              color: colorScheme.outlineVariant.withOpacity(0.5),
+              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
             ),
 
             // Video list
@@ -391,7 +391,7 @@ class _PlaylistOverview extends ConsumerWidget {
                             RI.RiPlayListLine,
                             size: 64,
                             color:
-                                colorScheme.onSurfaceVariant.withOpacity(0.3),
+                                colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -468,7 +468,7 @@ class _PlaylistVideoItemState extends ConsumerState<_PlaylistVideoItem> {
         color: colorScheme.tertiary,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: colorScheme.primary.withOpacity(0.15),
+          color: colorScheme.primary.withValues(alpha: 0.15),
         ),
       ),
       child: InkWell(
@@ -483,7 +483,7 @@ class _PlaylistVideoItemState extends ConsumerState<_PlaylistVideoItem> {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: colorScheme.primary.withOpacity(0.1),
+                  color: colorScheme.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -513,11 +513,11 @@ class _PlaylistVideoItemState extends ConsumerState<_PlaylistVideoItem> {
                       width: 80,
                       height: 45,
                       color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white.withOpacity(0.1)
+                          ? Colors.white.withValues(alpha: 0.1)
                           : colorScheme.surfaceContainerHighest,
                       child: Icon(
                         Icons.image_not_supported,
-                        color: colorScheme.onSurfaceVariant.withOpacity(0.3),
+                        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                         size: 20,
                       ),
                     ),
@@ -561,7 +561,7 @@ class _PlaylistVideoItemState extends ConsumerState<_PlaylistVideoItem> {
                               child: LinearProgressIndicator(
                                 value: effectiveProgress,
                                 backgroundColor:
-                                    colorScheme.primary.withOpacity(0.2),
+                                    colorScheme.primary.withValues(alpha: 0.2),
                                 minHeight: 3,
                               ),
                             ),
@@ -674,7 +674,7 @@ class _M3U8DetailView extends ConsumerWidget {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: Border(
-          left: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.5)),
+          left: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
         ),
       ),
       child: SingleChildScrollView(
@@ -689,7 +689,7 @@ class _M3U8DetailView extends ConsumerWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: colorScheme.primary.withOpacity(0.15),
+                    color: colorScheme.primary.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -796,7 +796,7 @@ class _M3U8DetailView extends ConsumerWidget {
             // Segment progress
             if (updatedPlaylist.playlistTotalVideos != null &&
                 updatedPlaylist.playlistTotalVideos! > 0) ...[
-              Divider(color: colorScheme.outlineVariant.withOpacity(0.5)),
+              Divider(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
               const SizedBox(height: 8),
               Text(
                 'Segments',
@@ -813,7 +813,7 @@ class _M3U8DetailView extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
                         value: effectiveProgress,
-                        backgroundColor: colorScheme.primary.withOpacity(0.15),
+                        backgroundColor: colorScheme.primary.withValues(alpha: 0.15),
                         minHeight: 6,
                       ),
                     ),
@@ -873,7 +873,7 @@ class _M3U8DetailView extends ConsumerWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16)),
                   side:
-                      BorderSide(color: colorScheme.primary.withOpacity(0.15)),
+                      BorderSide(color: colorScheme.primary.withValues(alpha: 0.15)),
                 ),
               ),
 
@@ -883,9 +883,9 @@ class _M3U8DetailView extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: colorScheme.error.withOpacity(0.1),
+                  color: colorScheme.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: colorScheme.error.withOpacity(0.3)),
+                  border: Border.all(color: colorScheme.error.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [

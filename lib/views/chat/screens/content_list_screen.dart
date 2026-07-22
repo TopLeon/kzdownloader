@@ -188,7 +188,7 @@ class _ContentListScreenState extends ConsumerState<ContentListScreen> {
                     closedBorderRadius: BorderRadius.circular(8),
                     expandedBorderRadius: BorderRadius.circular(8),
                     expandedBorder: Border.all(
-                      color: colorScheme.primary.withOpacity(0.15),
+                      color: colorScheme.primary.withValues(alpha: 0.15),
                       width: 1,
                     ),
                   ),
@@ -278,7 +278,7 @@ class _ContentListScreenState extends ConsumerState<ContentListScreen> {
                     color: Theme.of(context)
                         .colorScheme
                         .outlineVariant
-                        .withOpacity(0.5),
+                        .withValues(alpha: 0.5),
                   ),
                 ),
               ],
@@ -356,7 +356,7 @@ class _ContentListScreenState extends ConsumerState<ContentListScreen> {
         border: Border(
             left: BorderSide(
                 color:
-                    Theme.of(context).colorScheme.primary.withOpacity(0.15))),
+                    Theme.of(context).colorScheme.primary.withValues(alpha: 0.15))),
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
       child: Column(
@@ -368,7 +368,7 @@ class _ContentListScreenState extends ConsumerState<ContentListScreen> {
               border: Border(
                 bottom: BorderSide(
                   color:
-                      Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                      Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
                 ),
               ),
             ),

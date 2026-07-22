@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,7 +8,6 @@ import 'package:kzdownloader/views/chat/widgets/audio_player_bar.dart';
 import 'package:kzdownloader/views/chat/widgets/download_status_widget.dart';
 import 'package:ultimate_flutter_icons/ficon.dart';
 import 'package:ultimate_flutter_icons/icons/ri.dart';
-import 'package:window_manager/window_manager.dart';
 
 class Sidebar extends ConsumerStatefulWidget {
   final VoidCallback onNewDownload;
@@ -70,12 +67,12 @@ class _SidebarState extends ConsumerState<Sidebar>
       duration: const Duration(milliseconds: 280),
       curve: Curves.easeOutCubic,
       width: widget.isMinimized ? 80 : 235,
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.only(bottom: 12, top: 6),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: Border(
           right: BorderSide(
-            color: colorScheme.primary.withOpacity(0.15),
+            color: colorScheme.primary.withValues(alpha: 0.15),
             width: 1,
           ),
         ),
@@ -92,45 +89,6 @@ class _SidebarState extends ConsumerState<Sidebar>
                 onTap: widget.onToggle ?? () {},
                 icon: FIcon(RI.RiSideBarFill,
                     size: 24, color: colorScheme.primary),
-              ),
-            )
-          else
-            DragToMoveArea(
-              child: Padding(
-                padding: EdgeInsets.only(
-                    right: 14,
-                    left: 16,
-                    top: Platform.isMacOS ? 18 : 0,
-                    bottom: 6),
-                child: Row(
-                  children: [
-                    Text(
-                      'KZ',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onSurface,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    Text(
-                      'Downloader',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.onSurface,
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                    const Spacer(),
-                    if (widget.onToggle != null)
-                      _AnimatedSidebarIconButton(
-                        onTap: widget.onToggle!,
-                        icon: FIcon(RI.RiSideBarFill,
-                            size: 18, color: colorScheme.onSurfaceVariant),
-                      ),
-                  ],
-                ),
               ),
             ),
           Expanded(
@@ -220,6 +178,14 @@ class _SidebarState extends ConsumerState<Sidebar>
                       isExpanded: _isLibraryExpanded,
                       onToggle: () => setState(
                           () => _isLibraryExpanded = !_isLibraryExpanded),
+                      trailing: widget.onToggle != null
+                          ? _AnimatedSidebarIconButton(
+                              onTap: widget.onToggle!,
+                              icon: FIcon(RI.RiSideBarFill,
+                                  size: 18,
+                                  color: colorScheme.onSurfaceVariant),
+                            )
+                          : null,
                       children: [
                         _SidebarItem(
                           label: l10n.categoryHome,
@@ -408,6 +374,7 @@ class _SidebarGroup extends StatelessWidget {
   final bool isExpanded;
   final VoidCallback onToggle;
   final List<Widget> children;
+  final Widget? trailing;
 
   const _SidebarGroup({
     required this.title,
@@ -415,6 +382,7 @@ class _SidebarGroup extends StatelessWidget {
     required this.isExpanded,
     required this.onToggle,
     required this.children,
+    this.trailing,
   });
 
   @override
@@ -447,7 +415,6 @@ class _SidebarGroup extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 8),
                 AnimatedRotation(
                   turns: isExpanded ? 0 : -0.25,
                   duration: const Duration(milliseconds: 250),
@@ -455,6 +422,10 @@ class _SidebarGroup extends StatelessWidget {
                   child: FIcon(RI.RiArrowDownSLine,
                       size: 18, color: colorScheme.onSurfaceVariant),
                 ),
+                if (trailing != null) ...[
+                  const SizedBox(width: 4),
+                  trailing!,
+                ],
               ],
             ),
           ),
@@ -577,12 +548,13 @@ class _SidebarItemState extends State<_SidebarItem>
                     color: widget.isSelected
                         ? widget.colorScheme.tertiary
                         : _isHovered
-                            ? widget.colorScheme.tertiary.withOpacity(0.6)
+                            ? widget.colorScheme.tertiary.withValues(alpha: 0.6)
                             : widget.colorScheme.surface,
                     borderRadius: BorderRadius.circular(16),
                     border: widget.isSelected
                         ? Border.all(
-                            color: widget.colorScheme.primary.withOpacity(0.15),
+                            color: widget.colorScheme.primary
+                                .withValues(alpha: 0.15),
                             width: 1)
                         : null,
                   ),
@@ -625,20 +597,21 @@ class _SidebarItemState extends State<_SidebarItem>
                 color: widget.isSelected
                     ? widget.colorScheme.tertiary
                     : _isHovered
-                        ? widget.colorScheme.tertiary.withOpacity(0.5)
+                        ? widget.colorScheme.tertiary.withValues(alpha: 0.5)
                         : widget.colorScheme.surface,
                 borderRadius: const BorderRadius.all(Radius.circular(12)),
                 boxShadow: [
                   if (widget.isSelected)
                     BoxShadow(
-                      color: widget.colorScheme.shadow.withOpacity(0.025),
+                      color: widget.colorScheme.shadow.withValues(alpha: 0.025),
                       blurRadius: 20,
                       offset: const Offset(0, 2),
                     )
                 ],
                 border: widget.isSelected
                     ? Border.all(
-                        color: widget.colorScheme.primary.withOpacity(0.15),
+                        color:
+                            widget.colorScheme.primary.withValues(alpha: 0.15),
                         width: 1)
                     : null,
               ),
@@ -663,9 +636,8 @@ class _SidebarItemState extends State<_SidebarItem>
                       duration: const Duration(milliseconds: 220),
                       curve: Curves.easeOutCubic,
                       child: AnimatedSlide(
-                        offset: _labelVisible
-                            ? Offset.zero
-                            : const Offset(-0.1, 0),
+                        offset:
+                            _labelVisible ? Offset.zero : const Offset(-0.1, 0),
                         duration: const Duration(milliseconds: 220),
                         curve: Curves.easeOutCubic,
                         child: AnimatedDefaultTextStyle(
@@ -704,7 +676,8 @@ class _SidebarItemState extends State<_SidebarItem>
                               horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
                             color: widget.isSelected
-                                ? widget.colorScheme.primary.withOpacity(0.1)
+                                ? widget.colorScheme.primary
+                                    .withValues(alpha: 0.1)
                                 : widget.colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(16),
                           ),
