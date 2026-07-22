@@ -1,6 +1,6 @@
 <div align="center">
 <p align="center">
-  <img src="assets/banner.png" width="60%"/>
+  <img src="assets/banner.png" />
   <br>
 </p>
 
@@ -188,7 +188,7 @@ For AI features, open **Settings** and choose an AI provider:
 |---|---|
 | Windows | ✅ Full support |
 | macOS | ✅ Full support |
-| Linux | ⚠️ Need test |
+| Linux | ✅ Full support |
 | Android / iOS | ❌ Not supported |
 
 ## 🗂️ Project Structure
