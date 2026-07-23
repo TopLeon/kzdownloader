@@ -635,10 +635,10 @@ packages:
     dependency: transitive
     description:
       name: googleai_dart
-      sha256: "350c0323420dcd69873ed25cc7191bbb4ca8139ba0d7d9e4ac50c23061ada9ba"
+      sha256: "88f4f64c8a3929bfc2ec94e0b10d8a94940b4485600f62f4a59a9fe5e958d11f"
       url: "https://pub.dev"
     source: hosted
-    version: "3.6.0"
+    version: "3.5.0"
   googleapis:
     dependency: transitive
     description:
@@ -857,10 +857,11 @@ packages:
   langchain_google:
     dependency: "direct main"
     description:
-      name: langchain_google
-      sha256: "37e4917c42361149b41fe883e7ff9b0fc136ec7b2c6e4545c6d886e22656ec94"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/langchain_google"
+      ref: ef9837b
+      resolved-ref: ef9837b45d0a7ed9b4d65f53ff17bfe1a09d10c3
+      url: "https://github.com/davidmigloz/langchain_dart.git"
+    source: git
     version: "0.7.1+2"
   langchain_ollama:
     dependency: "direct main"
