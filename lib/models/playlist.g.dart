@@ -61,7 +61,7 @@ const PlaylistSchema = CollectionSchema(
   getId: _playlistGetId,
   getLinks: _playlistGetLinks,
   attach: _playlistAttach,
-  version: '3.3.0',
+  version: '3.3.2',
 );
 
 int _playlistEstimateSize(

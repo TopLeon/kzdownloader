@@ -19,6 +19,7 @@ import 'package:ultimate_flutter_icons/ficon.dart';
 import 'package:ultimate_flutter_icons/icons/ri.dart';
 import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:kzdownloader/core/utils/utils.dart';
 import 'package:kzdownloader/l10n/arb/app_localizations.dart';
 
 // Detail pane for user-created music playlists.
@@ -177,19 +178,18 @@ class _PlaylistDetailPaneState extends ConsumerState<PlaylistDetailPane> {
 
     final content = M3U8Utils.exportPlaylistToM3U8(tracks);
 
-    final result = await FilePicker.platform.saveFile(
-      dialogTitle: l10n.exportM3u8,
-      fileName: '${widget.playlist.name}.m3u8',
-      type: FileType.any,
-    );
+    final selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    if (selectedDirectory == null) return;
 
-    if (result != null) {
-      await File(result).writeAsString(content);
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.exportSuccess)),
-      );
-    }
+    final safePlaylistName = FileUtils.sanitizeFilename(widget.playlist.name);
+    final outputPath =
+        '$selectedDirectory${Platform.pathSeparator}$safePlaylistName.m3u8';
+
+    await File(outputPath).writeAsString(content);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.exportSuccess)),
+    );
   }
 
   Future<void> _importM3U8() async {
@@ -482,8 +482,8 @@ class _PlaylistDetailPaneState extends ConsumerState<PlaylistDetailPane> {
                           FIcon(
                             RI.RiMusicLine,
                             size: 64,
-                            color:
-                                colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+                            color: colorScheme.onSurfaceVariant
+                                .withValues(alpha: 0.3),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -651,7 +651,8 @@ class _TrackItemWidgetState extends State<_TrackItemWidget> {
                                   width: 32,
                                   height: 32,
                                   decoration: BoxDecoration(
-                                    color: colorScheme.primary.withValues(alpha: 0.1),
+                                    color: colorScheme.primary
+                                        .withValues(alpha: 0.1),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Center(
