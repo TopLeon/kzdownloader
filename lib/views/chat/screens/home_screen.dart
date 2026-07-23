@@ -79,10 +79,9 @@ class HomeScreen extends ConsumerWidget {
     final prefetchStatus = ref.watch(prefetchStatusProvider);
     final prefetchedMap = ref.watch(prefetchedMetadataProvider);
     final currentUrl = controller.text;
-    final hasThumbnail =
-        prefetchStatus == PrefetchStatus.ready &&
-            prefetchedMap[currentUrl]?.thumbnail != null &&
-            prefetchedMap[currentUrl]!.thumbnail!.isNotEmpty;
+    final hasThumbnail = prefetchStatus == PrefetchStatus.ready &&
+        prefetchedMap[currentUrl]?.thumbnail != null &&
+        prefetchedMap[currentUrl]!.thumbnail!.isNotEmpty;
 
     return MouseRegion(
       child: Stack(
@@ -97,7 +96,7 @@ class HomeScreen extends ConsumerWidget {
               hasThumbnail: hasThumbnail,
               child: Column(
                 children: [
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.32),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.32),
                   Center(
                     child: TweenAnimationBuilder<double>(
                       tween: Tween(begin: 0.0, end: 1.0),
@@ -342,8 +341,8 @@ class HomeScreen extends ConsumerWidget {
             position: Tween<Offset>(
               begin: const Offset(0, 0.3),
               end: Offset.zero,
-            ).animate(CurvedAnimation(
-                parent: animation, curve: Curves.easeOutCubic)),
+            ).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
             child: child,
           ),
         );
@@ -643,7 +642,8 @@ class _GeometricFallingStarsState extends State<_GeometricFallingStars>
       x: startX,
       y: startY,
       speed: 0.06 + _rng.nextDouble() * 0.12,
-      angle: math.pi * (0.55 + _rng.nextDouble() * 0.35), // ~100°–150° (down-left)
+      angle: math.pi *
+          (0.62 + _rng.nextDouble() * 0.09), // ~112°–128° (uniform down-left)
       size: starSize,
       rotation: _rng.nextDouble() * math.pi * 2,
       rotationSpeed: (_rng.nextDouble() - 0.5) * 3.0,
