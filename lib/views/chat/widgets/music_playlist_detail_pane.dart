@@ -178,69 +178,19 @@ class _PlaylistDetailPaneState extends ConsumerState<PlaylistDetailPane> {
 
     final content = M3U8Utils.exportPlaylistToM3U8(tracks);
 
-    final selectedDirectory = await FilePicker.platform.getDirectoryPath();
-    if (selectedDirectory == null) return;
-
     final safePlaylistName = FileUtils.sanitizeFilename(widget.playlist.name);
-    final outputPath =
-        '$selectedDirectory${Platform.pathSeparator}$safePlaylistName.m3u8';
+    final outputPath = await FilePicker.platform.saveFile(
+      dialogTitle: l10n.exportM3u8,
+      fileName: '$safePlaylistName.m3u8',
+      type: FileType.custom,
+      allowedExtensions: ['m3u8'],
+    );
+    if (outputPath == null) return;
 
     await File(outputPath).writeAsString(content);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(l10n.exportSuccess)),
-    );
-  }
-
-  Future<void> _importM3U8() async {
-    final l10n = AppLocalizations.of(context)!;
-
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.any,
-      allowedExtensions: null,
-      allowMultiple: false,
-    );
-
-    if (result == null || result.files.single.path == null) return;
-
-    final file = File(result.files.single.path!);
-    final content = await file.readAsString();
-    final entries = M3U8Utils.parseM3U8(content);
-
-    if (entries.isEmpty) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.noMatchingTracks)),
-      );
-      return;
-    }
-
-    // Match entries against existing download tasks by file path
-    final allTasks = await ref.read(downloadListProvider.future);
-    final entryPaths = entries.map((e) => e.path).toSet();
-
-    final matchedTasks = allTasks
-        .where((t) =>
-            t.filePath != null &&
-            entryPaths.contains(t.filePath) &&
-            t.downloadStatus.isSuccess)
-        .toList();
-
-    if (matchedTasks.isEmpty) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.noMatchingTracks)),
-      );
-      return;
-    }
-
-    await ref
-        .read(playlistListProvider.notifier)
-        .addTasksToPlaylist(widget.playlist.id, matchedTasks);
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.importSuccess)),
     );
   }
 
@@ -432,37 +382,19 @@ class _PlaylistDetailPaneState extends ConsumerState<PlaylistDetailPane> {
                   ),
                   const SizedBox(height: 12),
 
-                  // M3U8 Export/Import buttons
+                  // M3U8 Export button
                   if (playlistTracks.isNotEmpty)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextButton.icon(
-                          onPressed: () => _exportM3U8(playlistTracks),
-                          icon: FIcon(RI.RiDownloadLine,
-                              size: 16, color: colorScheme.onSurfaceVariant),
-                          label: Text(
-                            l10n.exportM3u8,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
+                    TextButton.icon(
+                      onPressed: () => _exportM3U8(playlistTracks),
+                      icon: FIcon(RI.RiDownloadLine,
+                          size: 16, color: colorScheme.onSurfaceVariant),
+                      label: Text(
+                        l10n.exportM3u8,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colorScheme.onSurfaceVariant,
                         ),
-                        const SizedBox(width: 8),
-                        TextButton.icon(
-                          onPressed: _importM3U8,
-                          icon: FIcon(RI.RiUploadLine,
-                              size: 16, color: colorScheme.onSurfaceVariant),
-                          label: Text(
-                            l10n.importM3u8,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   const SizedBox(height: 12),
 
@@ -743,6 +675,218 @@ class _TrackItemWidgetState extends State<_TrackItemWidget> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+// Dialog confirming the M3U8 import: shows how many tracks are local and how
+// many need to be downloaded, then lets the user confirm or cancel.
+class ImportM3U8ConfirmDialog extends StatelessWidget {
+  final int localCount;
+  final List<M3U8Entry> toDownloadEntries;
+
+  const ImportM3U8ConfirmDialog({
+    required this.localCount,
+    required this.toDownloadEntries,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 520, maxHeight: 520),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : colorScheme.outlineVariant,
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.playlist_add_rounded,
+                        color: colorScheme.primary, size: 22),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.importM3u8ConfirmTitle,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Summary chips
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  if (localCount > 0)
+                    _SummaryChip(
+                      icon: Icons.check_circle_outline_rounded,
+                      label: '$localCount trovato/i localmente',
+                      color: Colors.green,
+                    ),
+                  if (toDownloadEntries.isNotEmpty)
+                    _SummaryChip(
+                      icon: Icons.download_rounded,
+                      label: '${toDownloadEntries.length} da scaricare',
+                      color: colorScheme.primary,
+                    ),
+                ],
+              ),
+            ),
+
+            // List of URLs to download (if any)
+            if (toDownloadEntries.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Text(
+                  'URL che verranno scaricati:',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Flexible(
+                child: Scrollbar(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    itemCount: toDownloadEntries.length,
+                    itemBuilder: (context, index) {
+                      final entry = toDownloadEntries[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Row(
+                          children: [
+                            Icon(Icons.link_rounded,
+                                size: 14,
+                                color: colorScheme.onSurfaceVariant
+                                    .withValues(alpha: 0.6)),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                entry.title != null
+                                    ? '${entry.title} — ${entry.url}'
+                                    : entry.url,
+                                style: GoogleFonts.notoSans(
+                                  fontSize: 11,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+
+            const SizedBox(height: 20),
+            // Action buttons
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: Text(l10n.cancel),
+                  ),
+                  const SizedBox(width: 8),
+                  FilledButton.icon(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    icon: const Icon(Icons.download_rounded, size: 18),
+                    label: Text(l10n.btnDownloadAndImport),
+                    style: FilledButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SummaryChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  const _SummaryChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: color,
+            ),
+          ),
+        ],
       ),
     );
   }

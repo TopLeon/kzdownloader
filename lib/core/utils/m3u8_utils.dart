@@ -86,12 +86,13 @@ class M3U8ParseResult {
 }
 
 /// Represents a single entry parsed from an M3U8 file (for music playlist export/import).
+/// [url] holds the original video URL (e.g. a YouTube link) rather than a local file path.
 class M3U8Entry {
-  final String path;
+  final String url;
   final String? title;
   final int? durationSeconds;
 
-  const M3U8Entry({required this.path, this.title, this.durationSeconds});
+  const M3U8Entry({required this.url, this.title, this.durationSeconds});
 }
 
 /// Utility class for M3U8 playlist operations.
@@ -253,19 +254,19 @@ class M3U8Utils {
   // =========================================================================
 
   /// Generates M3U8 content string from a list of download tasks.
+  /// Each entry stores the original video URL so the playlist can be
+  /// re-imported on any device and the tracks re-downloaded automatically.
   static String exportPlaylistToM3U8(List<DownloadTask> tasks) {
     final buffer = StringBuffer();
     buffer.writeln('#EXTM3U');
 
     for (final task in tasks) {
-      if (task.filePath == null) continue;
-
       final title = task.title ?? 'Unknown';
       final channel = task.channelName;
       final label = channel != null ? '$title - $channel' : title;
 
       buffer.writeln('#EXTINF:-1,$label');
-      buffer.writeln(task.filePath);
+      buffer.writeln(task.url);
     }
 
     return buffer.toString();
@@ -296,7 +297,7 @@ class M3U8Utils {
       if (line.startsWith('#')) continue;
 
       entries.add(M3U8Entry(
-        path: line,
+        url: line,
         title: pendingTitle,
         durationSeconds: pendingDuration,
       ));

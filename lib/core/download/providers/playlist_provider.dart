@@ -31,13 +31,14 @@ class PlaylistNotifier extends Notifier<List<Playlist>> {
     });
   }
 
-  Future<void> createPlaylist(String name) async {
+  Future<Playlist> createPlaylist(String name) async {
     final colors = Playlist.generateRandomGradientColors();
     final playlist = Playlist()
       ..name = name
       ..gradientColor1 = colors[0]
       ..gradientColor2 = colors[1];
     await _db.savePlaylist(playlist);
+    return playlist;
   }
 
   Future<void> deletePlaylist(int id) async {

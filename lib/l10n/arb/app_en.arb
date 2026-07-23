@@ -569,6 +569,29 @@
     "importSuccess": "Import successful",
     "noMatchingTracks": "No matching tracks found",
     "autoplay": "Autoplay",
+    "importM3u8ConfirmTitle": "Import Playlist",
+    "importM3u8ConfirmBody": "Found {local} tracks locally. {toDownload} tracks will be downloaded.",
+    "@importM3u8ConfirmBody": {
+        "placeholders": {
+            "local": { "type": "int" },
+            "toDownload": { "type": "int" }
+        }
+    },
+    "importSuccessAllLocal": "All {count} tracks added to playlist.",
+    "@importSuccessAllLocal": {
+        "placeholders": {
+            "count": { "type": "int" }
+        }
+    },
+    "importSuccessWithDownloads": "Added {local} tracks. {downloading} downloads started. They will be added to the playlist once downloaded.",
+    "@importSuccessWithDownloads": {
+        "placeholders": {
+            "local": { "type": "int" },
+            "downloading": { "type": "int" }
+        }
+    },
+    "importDownloadComplete": "Download complete — track added to playlist.",
+    "btnDownloadAndImport": "Download & Import",
 
     "advancedOptions": "Advanced Options",
     "globalSpeedLimit": "Global Speed Limit",

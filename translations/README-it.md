@@ -29,6 +29,17 @@ KZDownloader è un'applicazione desktop multipiattaforma realizzata con Flutter 
 
 Il design è moderno, minimale e completamente reattivo, con bordi animati a gradiente neon sulle card di download e sugli elementi interattivi, transizioni fluide e feedback in tempo reale.
 
+## 📸 Screenshot
+
+<p align="center">
+  <img src="../imgs/1.png" width="49%" alt="Schermata Home" />
+  <img src="../imgs/2.png" width="49%" alt="Opzioni di Download" />
+</p>
+<p align="center">
+  <img src="../imgs/3.png" width="49%" alt="Libreria Video e AI Insights" />
+  <img src="../imgs/4.png" width="49%" alt="Libreria Musicale e Playlist" />
+</p>
+
 ## ✨ Funzionalità
 
 ### 🎬 Download di Video e Audio

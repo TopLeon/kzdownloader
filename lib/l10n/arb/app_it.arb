@@ -565,6 +565,29 @@
     "importSuccess": "Importazione completata",
     "noMatchingTracks": "Nessun brano trovato",
     "autoplay": "Riproduzione Automatica",
+    "importM3u8ConfirmTitle": "Importa Playlist",
+    "importM3u8ConfirmBody": "Trovati {local} brani localmente. {toDownload} brani verranno scaricati automaticamente.",
+    "@importM3u8ConfirmBody": {
+        "placeholders": {
+            "local": { "type": "int" },
+            "toDownload": { "type": "int" }
+        }
+    },
+    "importSuccessAllLocal": "Tutti i {count} brani aggiunti alla playlist.",
+    "@importSuccessAllLocal": {
+        "placeholders": {
+            "count": { "type": "int" }
+        }
+    },
+    "importSuccessWithDownloads": "Aggiunti {local} brani. {downloading} download avviati. Verranno aggiunti alla playlist una volta scaricati.",
+    "@importSuccessWithDownloads": {
+        "placeholders": {
+            "local": { "type": "int" },
+            "downloading": { "type": "int" }
+        }
+    },
+    "importDownloadComplete": "Download completato — brano aggiunto alla playlist.",
+    "btnDownloadAndImport": "Scarica & Importa",
 
     "advancedOptions": "Opzioni Avanzate",
     "globalSpeedLimit": "Limite di Velocità Globale",

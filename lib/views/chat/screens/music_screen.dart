@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,8 @@ import 'package:kzdownloader/views/widgets/confirm_dialog.dart';
 import 'package:ultimate_flutter_icons/ficon.dart';
 import 'package:ultimate_flutter_icons/icons/ri.dart';
 import 'package:kzdownloader/views/chat/screens/sort_options.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:kzdownloader/core/utils/m3u8_utils.dart';
 
 class MusicScreen extends ConsumerStatefulWidget {
   final String searchQuery;
@@ -62,6 +65,169 @@ class _MusicScreenState extends ConsumerState<MusicScreen> {
         inputController: controller);
   }
 
+  Future<void> _importM3U8() async {
+    final l10n = AppLocalizations.of(context)!;
+
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.any,
+      allowMultiple: false,
+    );
+
+    if (result == null || result.files.single.path == null) return;
+
+    final file = File(result.files.single.path!);
+    final content = await file.readAsString();
+    final entries = M3U8Utils.parseM3U8(content);
+
+    if (entries.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.noMatchingTracks)),
+      );
+      return;
+    }
+
+    // Match entries against existing download tasks by original URL.
+    final allTasks = await ref.read(downloadListProvider.future);
+    final entryUrls = entries.map((e) => e.url).toSet();
+
+    final localTasks = allTasks
+        .where((t) => entryUrls.contains(t.url) && t.downloadStatus.isSuccess)
+        .toList();
+    final localUrls = localTasks.map((t) => t.url).toSet();
+    final toDownloadUrls =
+        entries.where((e) => !localUrls.contains(e.url)).toList();
+
+    if (localTasks.isEmpty && toDownloadUrls.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.noMatchingTracks)),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => ImportM3U8ConfirmDialog(
+        localCount: localTasks.length,
+        toDownloadEntries: toDownloadUrls,
+      ),
+    );
+    if (confirmed != true) return;
+    if (!mounted) return;
+
+    // Derive playlist name from filename (strip .m3u8 extension)
+    final filename = result.files.single.name;
+    final playlistName = filename.toLowerCase().endsWith('.m3u8')
+        ? filename.substring(0, filename.length - 5)
+        : filename;
+
+    // createPlaylist returns the saved object with its DB-assigned id
+    final newPlaylist = await ref
+        .read(playlistListProvider.notifier)
+        .createPlaylist(playlistName);
+
+    if (localTasks.isNotEmpty) {
+      await ref
+          .read(playlistListProvider.notifier)
+          .addTasksToPlaylist(newPlaylist.id, localTasks);
+    }
+
+    if (toDownloadUrls.isNotEmpty) {
+      final playlistId = newPlaylist.id;
+      final pendingUrls = toDownloadUrls.map((e) => e.url).toSet();
+
+      for (final entry in toDownloadUrls) {
+        await ref.read(downloadListProvider.notifier).addTask(
+              entry.url,
+              'yt-dlp',
+              isAudio: true,
+              category: TaskCategory.music,
+            );
+      }
+
+      StreamSubscription? sub;
+      sub = ref.read(dbServiceProvider).watchTasks().listen((tasks) async {
+        final justCompleted = tasks.where((t) =>
+            pendingUrls.contains(t.url) &&
+            t.downloadStatus.isSuccess &&
+            t.filePath != null);
+
+        for (final task in justCompleted) {
+          if (!pendingUrls.contains(task.url)) continue;
+          pendingUrls.remove(task.url);
+          await ref
+              .read(playlistListProvider.notifier)
+              .addTasksToPlaylist(playlistId, [task]);
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text(
+                      AppLocalizations.of(context)!.importDownloadComplete)),
+            );
+          }
+        }
+
+        if (pendingUrls.isEmpty) await sub?.cancel();
+      });
+    }
+
+    if (!mounted) return;
+    setState(() => _selectedPlaylist = newPlaylist);
+
+    final snackMsg = toDownloadUrls.isEmpty
+        ? l10n.importSuccessAllLocal(localTasks.length)
+        : l10n.importSuccessWithDownloads(
+            localTasks.length, toDownloadUrls.length);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(snackMsg),
+        duration: const Duration(seconds: 5),
+      ),
+    );
+  }
+
+  Widget _buildPlaylistSectionHeader(
+      AppLocalizations l10n, ColorScheme colorScheme) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Icon(Icons.playlist_play, color: colorScheme.primary),
+            const SizedBox(width: 8),
+            Text(
+              l10n.playlistSection,
+              style: GoogleFonts.spaceGrotesk(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface,
+              ),
+            ),
+            const Spacer(),
+            TextButton.icon(
+              onPressed: _importM3U8,
+              icon: FIcon(RI.RiUploadLine,
+                  size: 14, color: colorScheme.onSurfaceVariant),
+              label: Text(
+                l10n.importM3u8,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Divider(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final downloadListAsync = ref.watch(downloadListProvider);
@@ -100,9 +266,8 @@ class _MusicScreenState extends ConsumerState<MusicScreen> {
                                 Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                                  child: SectionHeader(
-                                      title: l10n.playlistSection,
-                                      icon: Icons.playlist_play),
+                                  child: _buildPlaylistSectionHeader(
+                                      l10n, colorScheme),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -287,9 +452,8 @@ class _MusicScreenState extends ConsumerState<MusicScreen> {
                                 Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                                  child: SectionHeader(
-                                      title: l10n.playlistSection,
-                                      icon: Icons.playlist_play),
+                                  child: _buildPlaylistSectionHeader(
+                                      l10n, colorScheme),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(

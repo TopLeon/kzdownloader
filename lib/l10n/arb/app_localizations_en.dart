@@ -1439,6 +1439,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoplay => 'Autoplay';
 
   @override
+  String get importM3u8ConfirmTitle => 'Import Playlist';
+
+  @override
+  String importM3u8ConfirmBody(int local, int toDownload) {
+    return 'Found $local tracks locally. $toDownload tracks will be downloaded.';
+  }
+
+  @override
+  String importSuccessAllLocal(int count) {
+    return 'All $count tracks added to playlist.';
+  }
+
+  @override
+  String importSuccessWithDownloads(int local, int downloading) {
+    return 'Added $local tracks. $downloading downloads started. They will be added to the playlist once downloaded.';
+  }
+
+  @override
+  String get importDownloadComplete =>
+      'Download complete — track added to playlist.';
+
+  @override
+  String get btnDownloadAndImport => 'Download & Import';
+
+  @override
   String get advancedOptions => 'Advanced Options';
 
   @override

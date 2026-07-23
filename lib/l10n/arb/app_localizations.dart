@@ -2798,6 +2798,42 @@ abstract class AppLocalizations {
   /// **'Autoplay'**
   String get autoplay;
 
+  /// No description provided for @importM3u8ConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Playlist'**
+  String get importM3u8ConfirmTitle;
+
+  /// No description provided for @importM3u8ConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Found {local} tracks locally. {toDownload} tracks will be downloaded.'**
+  String importM3u8ConfirmBody(int local, int toDownload);
+
+  /// No description provided for @importSuccessAllLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'All {count} tracks added to playlist.'**
+  String importSuccessAllLocal(int count);
+
+  /// No description provided for @importSuccessWithDownloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Added {local} tracks. {downloading} downloads started. They will be added to the playlist once downloaded.'**
+  String importSuccessWithDownloads(int local, int downloading);
+
+  /// No description provided for @importDownloadComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Download complete — track added to playlist.'**
+  String get importDownloadComplete;
+
+  /// No description provided for @btnDownloadAndImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Download & Import'**
+  String get btnDownloadAndImport;
+
   /// No description provided for @advancedOptions.
   ///
   /// In en, this message translates to:

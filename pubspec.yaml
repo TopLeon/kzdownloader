@@ -22,7 +22,7 @@ dependencies:
   riverpod_annotation: ^3.0.0
   
   shared_preferences: any
-  file_picker: any
+  file_picker: ^8.1.7
   open_file: any
 
   # --- UI & SYSTEM ---

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -82,14 +84,19 @@ class _SidebarState extends ConsumerState<Sidebar>
             ? CrossAxisAlignment.center
             : CrossAxisAlignment.start,
         children: [
-          if (widget.isMinimized)
+          if (widget.isMinimized) ...[
             Padding(
-              padding: const EdgeInsets.only(bottom: 6, top: 14),
+              padding:
+                  EdgeInsets.only(bottom: 6, top: Platform.isMacOS ? 24 : 16),
               child: _AnimatedSidebarIconButton(
                 onTap: widget.onToggle ?? () {},
                 icon: FIcon(RI.RiSideBarFill,
                     size: 24, color: colorScheme.primary),
               ),
+            ),
+          ] else if (Platform.isMacOS)
+            const SizedBox(
+              height: 16,
             ),
           Expanded(
             child: SingleChildScrollView(
@@ -98,8 +105,8 @@ class _SidebarState extends ConsumerState<Sidebar>
                   if (widget.isMinimized) ...[
                     _SidebarItem(
                       label: l10n.categoryHome,
-                      icon: RI.RiShadowLine,
-                      selectedIcon: RI.RiShadowLine,
+                      icon: RI.RiHomeLine,
+                      selectedIcon: RI.RiHomeLine,
                       isSelected: selectedCategory == TaskCategory.home,
                       onTap: () => ref
                           .read(selectedCategoryProvider.notifier)
@@ -189,8 +196,8 @@ class _SidebarState extends ConsumerState<Sidebar>
                       children: [
                         _SidebarItem(
                           label: l10n.categoryHome,
-                          icon: RI.RiShadowLine,
-                          selectedIcon: RI.RiShadowLine,
+                          icon: RI.RiHomeLine,
+                          selectedIcon: RI.RiHomeLine,
                           isSelected: selectedCategory == TaskCategory.home,
                           onTap: () => ref
                               .read(selectedCategoryProvider.notifier)
