@@ -4,8 +4,6 @@
   <br>
 </p>
 
-# KZDownloader
-
 **Un bellissimo gestore di download desktop multipiattaforma con analisi video basata su AI.**
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter)](https://flutter.dev)
