@@ -1,18 +1,19 @@
 <div align="center">
 <p align="center">
-  <img src="assets/banner.png" />
+  <img src="assets/banner.png" alt="KZDownloader Banner" />
   <br>
 </p>
+
+# KZDownloader
 
 **A beautiful, cross-platform desktop download manager with AI-powered video analysis.**
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?logo=dart)](https://dart.dev)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)]()
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#-supported-platforms)
 
-
-[English](#english) &nbsp;•&nbsp; [Italiano](https://github.com/TopLeon/KZDownloader/blob/main/translations/README-it.md)
+[English](#) &nbsp;•&nbsp; [Italiano](translations/README-it.md)
 
 </div>
 
@@ -21,11 +22,35 @@
 > [!WARNING]
 > **KZDownloader is currently in beta.** You may encounter bugs or incomplete features. Please report any issues on the [issue tracker](../../issues).
 
-<a id="english"></a>
+---
 
-## Overview
+## 📖 Table of Contents
 
-KZDownloader is a cross-platform desktop application built with Flutter that lets you download videos, music, and generic files from hundreds of websites. It integrates a powerful AI assistant that can summarize YouTube video content and answer questions about it. 
+- [Overview](#-overview)
+- [Screenshots](#-screenshots)
+- [Features](#-features)
+- [Supported Platforms](#-supported-platforms)
+- [Getting Started](#-getting-started)
+  - [Download Pre-compiled Releases](#-download-pre-compiled-releases)
+  - [Build Process](#build-process)
+    - [Prerequisites](#prerequisites)
+    - [Linux Environment Setup](#linux-environment-setup)
+    - [Clone \& Run](#clone--run)
+  - [First Launch Setup](#first-launch-setup)
+- [Architecture \& Tech Stack](#-architecture--tech-stack)
+  - [Tech Stack](#tech-stack)
+  - [External Binaries](#external-binaries)
+  - [Project Structure](#project-structure)
+- [Roadmap](#-roadmap)
+- [Known Issues](#-known-issues)
+- [Contributing](#-contributing)
+- [License \& Legal Disclaimer](#-license--legal-disclaimer)
+
+---
+
+## 🔍 Overview
+
+KZDownloader is a cross-platform desktop application built with Flutter that lets you download videos, music, and generic files from hundreds of websites. It integrates a powerful AI assistant that can summarize YouTube video content and answer questions about it.
 
 The design is modern, minimal, and fully reactive, featuring animated neon gradient borders on download cards and interactive elements, smooth transitions, and real-time progress feedback.
 
@@ -44,28 +69,28 @@ The design is modern, minimal, and fully reactive, featuring animated neon gradi
 
 ### 🎬 Video & Audio Downloads
 - Download videos and audio from **YouTube** and hundreds of other platforms powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp).
-- Choose **video format** (MP4, MKV) and **quality** before downloading
+- Choose **video format** (MP4, MKV) and **quality** before downloading.
 - Download entire **YouTube playlists** with configurable concurrency — each video is tracked individually.
 - Audio-only extraction to **MP3, M4A and OGG**.
 
 ### 📁 Generic File Downloader
 - Blazing fast, multi-threaded, **IDM-style chunked download** for any direct HTTP/HTTPS link.
   - **Writer Isolate**: a dedicated Dart isolate writes data directly to the final file position via `RandomAccessFile`, eliminating temporary files and redundant I/O passes.
-  - **Backpressure control (ackIterator)**: each network worker waits for the Writer Isolate to acknowledge a successful disk write before fetching the next chunk — preventing Out-of-Memory crashes when network throughput exceeds disk write speed.
+  - **Backpressure control (`ackIterator`)**: each network worker waits for the Writer Isolate to acknowledge a successful disk write before fetching the next chunk — preventing Out-of-Memory crashes when network throughput exceeds disk write speed.
   - **Dynamic Connection Reuse**: once a connection finishes its assigned byte range it is immediately reassigned to the slowest active chunk, keeping the maximum number of connections busy at all times for sustained peak download speeds.
 - Automatic **resume support** — interrupted downloads pick up where they left off if the server supports range requests.
 - Per-chunk progress visualization with active worker count and individual segment progress bars.
 - Built on a Rust-based HTTP backend ([rhttp_plus](https://pub.dev/packages/rhttp_plus)) for maximum throughput and **TLS fingerprinting** to avoid bot-detection on protected servers.
 
-### 🤖 Video Summaries & Chat
+### 🤖 Video Summaries & AI Chat
 - Automatically fetch the **transcript** (or description) of a YouTube video and generate a structured summary using an LLM.
 - Ask **follow-up questions** in a persistent chat session tied to the video — Q&A history is saved locally.
 - **100% Local AI Capabilities**: Perform complete video analysis and chat offline with absolute privacy.
 - Support for multiple AI providers:
   - **Ollama** (fully local, no data leaves the machine)
   - **LM Studio** (fully local, OpenAI-compatible local server)
-  - **OpenAI** (need API key)
-  - **Google Gemini** (need API key)
+  - **OpenAI** (requires API key)
+  - **Google Gemini** (requires API key)
 - Streaming text output with animated Markdown rendering.
 - Configurable context size (max characters fed to the LLM).
 
@@ -93,38 +118,26 @@ The design is modern, minimal, and fully reactive, featuring animated neon gradi
 - Glassmorphism glow blobs on the home screen and smooth CSS-style transitions throughout.
 - Responsive layout with separate view adaptations for Windows/Linux and macOS.
 
-## 🏗️ Architecture & Tech Stack
+## 📋 Supported Platforms
 
-| Layer | Technology |
-|---|---|
-| UI Framework | Flutter 3.x + Material 3 |
-| State Management | flutter_riverpod + riverpod_annotation (code generation) |
-| Local Database | isar_community |
-| AI / LLM | langchain, langchain_ollama, langchain_openai, langchain_google |
-| HTTP Client | rhttp_plus (Rust-based FFI, TLS fingerprinting) |
-| Video Metadata | youtube_explode_dart + yt-dlp fallback |
-| Audio Playback | just_audio + media_kit (Windows) |
-| Secure Storage | flutter_secure_storage |
-| Fonts & Icons | Google Fonts, ultimate_flutter_icons, not_static_icons |
-| Localisation | Flutter Gen-l10n (ARB files) |
-
-## 📦 External Binaries (auto-downloaded on first launch)
-
-KZDownloader automatically downloads and manages the following external tools into the app's support directory — no manual installation required:
-
-| Binary | Purpose |
-|---|---|
-| **yt-dlp** | Video/audio download and metadata extraction |
-| **ffmpeg** | Post-processing, remuxing, and audio extraction |
-| **deno** | Needed by ytdlp for extracting data |
+| Platform | Status | Note |
+|---|---|---|
+| **Windows** | ✅ Full Support | Windows 10/11 (x64) |
+| **macOS** | ✅ Full Support | Intel & Apple Silicon (macOS 11+) |
+| **Linux** | ✅ Full Support | Ubuntu / Debian / GTK3 desktop environments |
+| **Android / iOS** | ❌ Not Supported | Desktop platforms only |
 
 ## 🚀 Getting Started
 
-### ⬇️ Download
+### ⬇️ Download Pre-compiled Releases
 
 Pre-compiled binaries for Windows and macOS are available directly in the [**Releases**](../../releases) section — no build environment needed.
 
-> ⚠️ macOS Users: Since the app is currently self-signed, Gatekeeper will block it on first launch. To run it, Right-click the app, select Open, and then click Open again in the dialog box.
+> [!IMPORTANT]
+> **macOS Users**: Since the app is currently self-signed, Gatekeeper will block it on first launch. To run it:
+> 1. Right-click the app icon in Finder.
+> 2. Select **Open**.
+> 3. Click **Open** again in the confirmation dialog.
 
 ### Build Process
 
@@ -132,25 +145,24 @@ Pre-compiled binaries for Windows and macOS are available directly in the [**Rel
 
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) ≥ 3.2.0
 - Dart SDK ≥ 3.2.0
-- A desktop target configured (`flutter config --enable-windows-desktop` / `--enable-macos-desktop` / `--enable-linux-desktop`)
+- Desktop target enabled (`flutter config --enable-windows-desktop` / `--enable-macos-desktop` / `--enable-linux-desktop`)
 
-#### Linux Only
+#### Linux Environment Setup
 
-If you are compiling this Flutter application on Linux (Ubuntu), you need to configure your environment correctly to avoid build failures with native plugins (such as `rhttp_plus` and `flutter_secure_storage`).
+If you are compiling KZDownloader on Linux (Ubuntu/Debian), configure your environment correctly to avoid build failures with native plugins (such as `rhttp_plus` and `flutter_secure_storage`).
 
 ##### 1. Avoid Flutter via Snap
-The Snap installation of Flutter runs in an isolated container and causes `glibc` library mismatches when compiling native Rust/C++ dependencies. 
-If you installed Flutter via Snap, remove it and use the standalone repository clone instead:
+The Snap installation of Flutter runs in an isolated container and causes `glibc` library mismatches when compiling native Rust/C++ dependencies. If you installed Flutter via Snap, remove it and use the official repository clone:
+
 ```bash
 sudo snap remove flutter
 git clone https://github.com/flutter/flutter.git -b stable ~/.flutter
 export PATH="$PATH:$HOME/.flutter/bin"
-
 ```
 
-##### 2. Install Required System Dependencies
+##### 2. Install System Dependencies
 
-The project relies on native compilation tools, window manager libraries, Rust, and the GNOME Secret Service API. Install them using `apt` and `rustup`:
+The project relies on native compilation tools, GTK libraries, Rust toolchain, and the GNOME Secret Service API:
 
 ```bash
 # Build tools, GTK development files, and Secret Service headers
@@ -163,7 +175,6 @@ source $HOME/.cargo/env
 
 # Install libmpv for media_kit
 sudo apt install libmpv-dev mpv
-
 ```
 
 #### Clone & Run
@@ -179,30 +190,48 @@ flutter pub get
 # Run code generation (Isar + Riverpod)
 dart run build_runner build --delete-conflicting-outputs
 
-# Launch on your platform
+# Launch application
 flutter run -d windows   # or macos / linux
 ```
 
-### First Launch
+### First Launch Setup
 
-On the first run KZDownloader will:
-1. Ask you to select a **default download directory**.
-2. Automatically download **yt-dlp** and **ffmpeg** in the background.
+On first startup, KZDownloader will automatically:
+1. Prompt you to select a **default download directory**.
+2. Download and configure required binaries (**yt-dlp**, **ffmpeg**, **deno**) in the background.
 
-For AI features, open **Settings** and choose an AI provider:
-- **Ollama**: install [Ollama](https://ollama.com) locally and pull a model (e.g. `ollama pull llama3`).
-- **OpenAI / Google**: enter your API key in the Settings panel or on first launch — it is stored securely in the OS keychain.
+To configure AI features, open **Settings** and select a provider:
+- **Ollama**: Install [Ollama](https://ollama.com) locally and pull a model (e.g. `ollama pull llama3`).
+- **OpenAI / Google**: Enter your API key in Settings or on initial setup — stored securely in your OS keychain.
 
-## 📋 Supported Platforms
+## 🏗️ Architecture & Tech Stack
 
-| Platform | Status |
+### Tech Stack
+
+| Layer | Technology |
 |---|---|
-| Windows | ✅ Full support |
-| macOS | ✅ Full support |
-| Linux | ✅ Full support |
-| Android / iOS | ❌ Not supported |
+| UI Framework | Flutter 3.x + Material 3 |
+| State Management | flutter_riverpod + riverpod_annotation (code generation) |
+| Local Database | isar_community |
+| AI / LLM | langchain, langchain_ollama, langchain_openai, langchain_google |
+| HTTP Client | rhttp_plus (Rust-based FFI, TLS fingerprinting) |
+| Video Metadata | youtube_explode_dart + yt-dlp fallback |
+| Audio Playback | just_audio + media_kit (Windows) |
+| Secure Storage | flutter_secure_storage |
+| Fonts & Icons | Google Fonts, ultimate_flutter_icons, not_static_icons |
+| Localisation | Flutter Gen-l10n (ARB files) |
 
-## 🗂️ Project Structure
+### External Binaries
+
+KZDownloader automatically manages the following external binaries in the app support directory — no manual installation required:
+
+| Binary | Purpose |
+|---|---|
+| **yt-dlp** | Video/audio download and metadata extraction |
+| **ffmpeg** | Post-processing, remuxing, and audio extraction |
+| **deno** | JavaScript runtime required by yt-dlp for extraction |
+
+### Project Structure
 
 ```
 lib/
@@ -228,20 +257,22 @@ lib/
 
 | Feature | Status |
 |---|---|
-| **Browser integration** — capture downloads directly from Chrome / Firefox via a companion extension | 🔜 Planned |
+| **Browser Integration** — Capture downloads directly from Chrome / Firefox via companion extension | 🔜 Planned |
 
 ## ⚠️ Known Issues
 
-- ~M3u8 Playlists detail pane has some visual bugs and imperfections~
+- M3U8 Playlists detail pane has some visual minor bugs and imperfections under specific theme configurations.
 
 ## 🤝 Contributing
 
-Contributions, bug reports and feature requests are welcome. Please open an issue or submit a pull request.
+Contributions, bug reports, and feature requests are welcome! Feel free to check the [issues](../../issues) page or open a pull request.
 
-## 📄 License
+## 📄 License & Legal Disclaimer
 
 This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)** — see the [LICENSE](LICENSE) file for details.
 
-The maintainer of KZDownloader cannot be held liable for misuse of this application, as stated in the GPL-3.0 license (section 16).
-The usage of this application may also cause a violation of the Terms of Service between you and the stream provider.
-Users are personally responsible for ensuring they use this software fairly and within legal boundaries.
+> [!WARNING]
+> **Legal Disclaimer**:
+> The maintainer of KZDownloader cannot be held liable for misuse of this application, as stated in the GPL-3.0 license (section 16).
+> 
+> The usage of this application may cause a violation of the Terms of Service between you and third-party content providers. Users are personally responsible for ensuring they use this software fairly and within legal boundaries.
