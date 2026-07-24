@@ -2147,7 +2147,7 @@ abstract class AppLocalizations {
   /// No description provided for @metadataReady.
   ///
   /// In en, this message translates to:
-  /// **'Metadata retrieved! Ready to download'**
+  /// **'Ready to download'**
   String get metadataReady;
 
   /// No description provided for @readyToDownload.
@@ -2935,6 +2935,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show speed history graph overlay on download cards.'**
   String get speedGraphDescription;
+
+  /// No description provided for @otherWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'... and {count} other workers'**
+  String otherWorkers(int count);
 }
 
 class _AppLocalizationsDelegate

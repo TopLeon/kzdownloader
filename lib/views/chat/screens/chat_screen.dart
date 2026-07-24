@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kzdownloader/core/services/llm_service.dart';
@@ -99,7 +99,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WindowListener {
       }
     }
 
-    super.onWindowClose();
+    await windowManager.destroy();
   }
 
   Future<void> _checkFirstRun() async {

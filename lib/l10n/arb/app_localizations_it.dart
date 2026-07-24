@@ -1095,7 +1095,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get downloadingMetadata => 'Sto scaricando i metadati...';
 
   @override
-  String get metadataReady => 'Metadati ottenuti! Pronto per scaricare';
+  String get metadataReady => 'Pronto per scaricare';
 
   @override
   String get readyToDownload => 'Pronto per scaricare';
@@ -1525,4 +1525,9 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get speedGraphDescription =>
       'Mostra il grafico della velocità sulle card di download.';
+
+  @override
+  String otherWorkers(int count) {
+    return '... e altri $count worker';
+  }
 }

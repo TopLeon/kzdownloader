@@ -76,6 +76,7 @@ class UrlUtils {
     }
 
     // Check file extension for direct downloads
+    /**
     final uri = Uri.tryParse(url);
     if (uri != null) {
       final path = uri.path.toLowerCase();
@@ -124,6 +125,7 @@ class UrlUtils {
         return TaskCategory.music;
       }
     }
+    **/
 
     return TaskCategory.generic;
   }

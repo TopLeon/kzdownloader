@@ -271,7 +271,9 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                           ),
                                           const SizedBox(height: 2),
                                           Text(
-                                            task.category == TaskCategory.video ? "${task.url.split('/')[2].replaceAll("www.", "")} - ${task.channelName ?? l10n.unknownChannel}" : task.url,
+                                            task.category == TaskCategory.video
+                                                ? "${task.url.split('/')[2].replaceAll("www.", "")} - ${task.channelName ?? l10n.unknownChannel}"
+                                                : task.url,
                                             style: GoogleFonts.montserrat(
                                                 fontSize: 13,
                                                 color: Theme.of(context)
@@ -298,8 +300,7 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                             Opacity(
                                           opacity: value,
                                           child: Transform.translate(
-                                            offset:
-                                                Offset((1 - value) * 12, 0),
+                                            offset: Offset((1 - value) * 12, 0),
                                             child: child,
                                           ),
                                         ),
@@ -377,7 +378,8 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                                                 .colorScheme
                                                                 .primary
                                                                 .withValues(
-                                                                    alpha: 0.15))),
+                                                                    alpha:
+                                                                        0.15))),
                                                     backgroundColor:
                                                         Theme.of(context)
                                                             .colorScheme
@@ -398,12 +400,13 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                                   shape: CircleBorder(
                                                       side: BorderSide(
                                                           width: 1,
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary
-                                                                  .withValues(
-                                                                      alpha: 0.15))),
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .colorScheme
+                                                              .primary
+                                                              .withValues(
+                                                                  alpha:
+                                                                      0.15))),
                                                   backgroundColor:
                                                       Theme.of(context)
                                                           .colorScheme
@@ -444,7 +447,8 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                                                 .colorScheme
                                                                 .primary
                                                                 .withValues(
-                                                                    alpha: 0.15))),
+                                                                    alpha:
+                                                                        0.15))),
                                                     backgroundColor:
                                                         Theme.of(context)
                                                             .colorScheme
@@ -474,12 +478,13 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                                   shape: CircleBorder(
                                                       side: BorderSide(
                                                           width: 1,
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary
-                                                                  .withValues(
-                                                                      alpha: 0.15))),
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .colorScheme
+                                                              .primary
+                                                              .withValues(
+                                                                  alpha:
+                                                                      0.15))),
                                                   foregroundColor:
                                                       Theme.of(context)
                                                           .colorScheme
@@ -497,9 +502,9 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                 const SizedBox(height: 6),
                                 // Speed history graph overlay
                                 _buildSpeedGraphOverlay(context, live),
-                                if (task.category == TaskCategory.generic &&
-                                    effectiveActiveWorkers != null &&
+                                if (effectiveActiveWorkers != null &&
                                     effectiveActiveWorkers > 1) ...[
+                                      const SizedBox(height: 8,),
                                   // IDM-style multi-threaded download indicator
                                   _buildIdmDownloadIndicatorLive(
                                     context,
@@ -519,8 +524,8 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                     animatedDuration:
                                         const Duration(milliseconds: 200),
                                     size: 3,
-                                    backgroundColor:
-                                        colorScheme.primary.withValues(alpha: 0.15),
+                                    backgroundColor: colorScheme.primary
+                                        .withValues(alpha: 0.15),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
@@ -628,7 +633,8 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                                     const Duration(milliseconds: 200),
                                 backgroundColor: isDone
                                     ? colorScheme.primary.withValues(alpha: 0.3)
-                                    : colorScheme.primary.withValues(alpha: 0.15),
+                                    : colorScheme.primary
+                                        .withValues(alpha: 0.15),
                                 progressColor: isDone
                                     ? colorScheme.primary.withValues(alpha: 0.7)
                                     : colorScheme.primary),
@@ -650,14 +656,15 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                     ),
                   );
                 }),
-                if (workers.length > 6)
+                if ((effectiveActiveWorkers ?? workers.length) > 6)
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
                     child: Text(
-                      '... e altri ${workers.length - 6} worker',
+                      l10n.otherWorkers((effectiveActiveWorkers ?? workers.length) - 6),
                       style: GoogleFonts.montserrat(
                         fontSize: 10,
-                        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
+                        color:
+                            colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -756,7 +763,8 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
                   Text(
                     l10n.checksumVerifying,
                     style: TextStyle(
-                        fontSize: 12, color: theme.colorScheme.onSurfaceVariant),
+                        fontSize: 12,
+                        color: theme.colorScheme.onSurfaceVariant),
                   ),
                   const SizedBox(width: 8),
                 ],
@@ -770,11 +778,12 @@ class _DownloadCardState extends ConsumerState<DownloadCard>
           ] else if (task.downloadStatus == WorkStatus.cancelled) ...[
             _buildMetaInternal(RI.RiCloseLine, l10n.cancel, theme, isDark),
           ] else if (File(task.filePath ?? '').existsSync()) ...[
-            _buildMetaInternal(RI.RiDownloadLine, l10n.downloaded, theme, isDark),
+            _buildMetaInternal(
+                RI.RiDownloadLine, l10n.downloaded, theme, isDark),
           ] else if (task.filePath != null) ...[
             _buildMetaInternal(RI.RiDeleteBinLine, l10n.deleted, theme, isDark),
           ],
-      
+
           if (task.totalSize != null)
             _buildMetaInternal(RI.RiSdCardLine, task.totalSize!, theme, isDark),
           if (task.summary != null)

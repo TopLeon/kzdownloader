@@ -401,7 +401,7 @@
     "playlistNameEditHint": "Il nome potrà essere modificato in un secondo momento.",
     "almostReady": "Ho quasi finito...",
     "downloadingMetadata": "Sto scaricando i metadati...",
-    "metadataReady": "Metadati ottenuti! Pronto per scaricare",
+    "metadataReady": "Pronto per scaricare",
     "readyToDownload": "Pronto per scaricare",
     "createdOn": "Creato il {date}",
     "@createdOn": {
@@ -605,5 +605,13 @@
     "userAgentHint": "Lascia vuoto per il default",
     "userAgentDescription": "Sovrascrive l'header User-Agent inviato con le richieste di download.",
     "speedGraph": "Grafico Velocità",
-    "speedGraphDescription": "Mostra il grafico della velocità sulle card di download."
+    "speedGraphDescription": "Mostra il grafico della velocità sulle card di download.",
+    "otherWorkers": "... e altri {count} worker",
+    "@otherWorkers": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    }
 }

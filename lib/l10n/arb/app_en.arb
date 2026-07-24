@@ -405,7 +405,7 @@
     "playlistNameEditHint": "The name can be changed later.",
     "almostReady": "Almost ready...",
     "downloadingMetadata": "Downloading metadata...",
-    "metadataReady": "Metadata retrieved! Ready to download",
+    "metadataReady": "Ready to download",
     "readyToDownload": "Ready to download",
     "createdOn": "Created on {date}",
     "@createdOn": {
@@ -609,5 +609,13 @@
     "userAgentHint": "Leave empty for default",
     "userAgentDescription": "Override the User-Agent header sent with download requests.",
     "speedGraph": "Speed Graph",
-    "speedGraphDescription": "Show speed history graph overlay on download cards."
+    "speedGraphDescription": "Show speed history graph overlay on download cards.",
+    "otherWorkers": "... and {count} other workers",
+    "@otherWorkers": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    }
 }

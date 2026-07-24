@@ -157,7 +157,7 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea> {
 
         if (UrlUtils.isM3U8Playlist(text)) {
           ref.read(downloadListProvider.notifier).prefetchM3U8Metadata(text);
-        } else if (!isVideo) {
+        } else if (!isVideo || UrlUtils.detectProvider(text) != 'yt-dlp') {
           ref.read(downloadListProvider.notifier).prefetchMetadata(text);
         } else {
           ref.read(downloadListProvider.notifier).prefetchVideoMetadata(text);
@@ -209,11 +209,13 @@ class _ChatInputAreaState extends ConsumerState<ChatInputArea> {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
-    final showProviderSelector = !_isVideoLink &&
-        (widget.controller.text.startsWith('http://') ||
-            widget.controller.text.startsWith('https://'));
+    final isHttpLink = widget.controller.text.startsWith('http://') ||
+            widget.controller.text.startsWith('https://');
 
-    final isGeneric = showProviderSelector && !widget.summarizeOnly;
+    final showProviderSelector = !_isVideoLink && isHttpLink;
+
+    final isGeneric = isHttpLink && !widget.summarizeOnly && 
+        (!_isVideoLink || (_isVideoLink && !widget.showVideoOptions));
 
     final showVideoOptionsPanel = (_isVideoLink && widget.showVideoOptions) ||
         (widget.summarizeOnly && widget.controller.text.isNotEmpty) ||
