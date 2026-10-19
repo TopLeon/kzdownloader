@@ -22,7 +22,7 @@
 
 ---
 
-## 📖 Table of Contents
+## Table of Contents
 
 - [Overview](#-overview)
 - [Screenshots](#-screenshots)
@@ -46,13 +46,13 @@
 
 ---
 
-## 🔍 Overview
+## Overview
 
 KZDownloader is a cross-platform desktop application built with Flutter that lets you download videos, music, and generic files from hundreds of websites. It integrates a powerful AI assistant that can summarize YouTube video content and answer questions about it.
 
 The design is modern, minimal, and fully reactive, featuring animated neon gradient borders on download cards and interactive elements, smooth transitions, and real-time progress feedback.
 
-## 📸 Screenshots
+## Screenshots
 
 <p align="center">
   <img src="imgs/1.png" width="49%" alt="Home Screen" />
@@ -63,15 +63,15 @@ The design is modern, minimal, and fully reactive, featuring animated neon gradi
   <img src="imgs/4.png" width="49%" alt="Music Library & Playlists" />
 </p>
 
-## ✨ Features
+## Features
 
-### 🎬 Video & Audio Downloads
+### Video & Audio Downloads
 - Download videos and audio from **YouTube** and hundreds of other platforms powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp).
 - Choose **video format** (MP4, MKV) and **quality** before downloading.
 - Download entire **YouTube playlists** with configurable concurrency — each video is tracked individually.
 - Audio-only extraction to **MP3, M4A and OGG**.
 
-### 📁 Generic File Downloader
+### Generic File Downloader
 - Blazing fast, multi-threaded, **IDM-style chunked download** for any direct HTTP/HTTPS link.
   - **Writer Isolate**: a dedicated Dart isolate writes data directly to the final file position via `RandomAccessFile`, eliminating temporary files and redundant I/O passes.
   - **Backpressure control (`ackIterator`)**: each network worker waits for the Writer Isolate to acknowledge a successful disk write before fetching the next chunk — preventing Out-of-Memory crashes when network throughput exceeds disk write speed.
@@ -80,7 +80,7 @@ The design is modern, minimal, and fully reactive, featuring animated neon gradi
 - Per-chunk progress visualization with active worker count and individual segment progress bars.
 - Built on a Rust-based HTTP backend ([rhttp_plus](https://pub.dev/packages/rhttp_plus)) for maximum throughput and **TLS fingerprinting** to avoid bot-detection on protected servers.
 
-### 🤖 Video Summaries & AI Chat
+### Video Summaries & AI Chat
 - Automatically fetch the **transcript** (or description) of a YouTube video and generate a structured summary using an LLM.
 - Ask **follow-up questions** in a persistent chat session tied to the video — Q&A history is saved locally.
 - **100% Local AI Capabilities**: Perform complete video analysis and chat offline with absolute privacy.
@@ -92,16 +92,16 @@ The design is modern, minimal, and fully reactive, featuring animated neon gradi
 - Streaming text output with animated Markdown rendering.
 - Configurable context size (max characters fed to the LLM).
 
-### 🎵 Music Library & Player
+### Music Library & Player
 - Dedicated **Music** tab listing all downloaded audio files.
 - Built-in **audio player** with a progress bar, play/pause, skip, and seek controls.
 - **Playlist management**: create named playlists and add tracks to them.
 
-### 🔒 Security & Integrity
+### Security & Integrity
 - **Checksum verification** (MD5, SHA-256) before triggering a download, ensuring file integrity.
 - API keys stored in **secure storage** (OS keychain / credential manager).
 
-### ⚙️ Settings & Customisation
+### Settings & Customisation
 - **Download directory** selection with onboarding prompt on first launch.
 - Default **format**, **quality**, and **audio format** presets.
 - **Dark / Light / System** theme with smooth transitions.
@@ -109,14 +109,14 @@ The design is modern, minimal, and fully reactive, featuring animated neon gradi
 - Configurable **concurrent downloads** per-playlist and globally.
 - AI model and provider selection with API key management.
 
-### 🖥️ Desktop Experience
+### Desktop Experience
 - Interface split into dedicated sections: **Videos**, **Music**, and **Generic files** — each with its own layout, sorting, and search.
 - Modern, minimal, and fully reactive design with real-time progress updates.
 - Animated **neon gradient borders** (`RainbowAnimatedBorder`) around download cards and interactive elements, rendered via a custom `CustomPainter`.
 - Glassmorphism glow blobs on the home screen and smooth CSS-style transitions throughout.
 - Responsive layout with separate view adaptations for Windows/Linux and macOS.
 
-## 📋 Supported Platforms
+## Supported Platforms
 
 | Platform | Status | Note |
 |---|---|---|
@@ -125,9 +125,9 @@ The design is modern, minimal, and fully reactive, featuring animated neon gradi
 | **Linux** | ✅ Full Support | Ubuntu / Debian / GTK3 desktop environments |
 | **Android / iOS** | ❌ Not Supported | Desktop platforms only |
 
-## 🚀 Getting Started
+## Getting Started
 
-### ⬇️ Download Pre-compiled Releases
+### Download Pre-compiled Releases
 
 Pre-compiled binaries for Windows and macOS are available directly in the [**Releases**](../../releases) section — no build environment needed.
 
@@ -202,7 +202,7 @@ To configure AI features, open **Settings** and select a provider:
 - **Ollama**: Install [Ollama](https://ollama.com) locally and pull a model (e.g. `ollama pull llama3`).
 - **OpenAI / Google**: Enter your API key in Settings or on initial setup — stored securely in your OS keychain.
 
-## 🏗️ Architecture & Tech Stack
+## Architecture & Tech Stack
 
 ### Tech Stack
 
@@ -251,21 +251,21 @@ lib/
 └── l10n/arb/                  # Localisation (EN / IT)
 ```
 
-## 🗺️ Roadmap
+## Roadmap
 
 | Feature | Status |
 |---|---|
 | **Browser Integration** — Capture downloads directly from Chrome / Firefox via companion extension | 🔜 Planned |
 
-## ⚠️ Known Issues
+## Known Issues
 
 - M3U8 Playlists detail pane has some visual minor bugs and imperfections under specific theme configurations.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions, bug reports, and feature requests are welcome! Feel free to check the [issues](../../issues) page or open a pull request.
 
-## 📄 License & Legal Disclaimer
+## License & Legal Disclaimer
 
 This project is licensed under the **GNU General Public License v3.0 (GPL-3.0)** — see the [LICENSE](LICENSE) file for details.
 
