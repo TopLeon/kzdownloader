@@ -24,25 +24,25 @@
 
 ## Table of Contents
 
-- [Overview](#-overview)
-- [Screenshots](#-screenshots)
-- [Features](#-features)
-- [Supported Platforms](#-supported-platforms)
-- [Getting Started](#-getting-started)
-  - [Download Pre-compiled Releases](#-download-pre-compiled-releases)
+- [Overview](#overview)
+- [Screenshots](#screenshots)
+- [Features](#features)
+- [Supported Platforms](#supported-platforms)
+- [Getting Started](#getting-started)
+  - [Download Pre-compiled Releases](#download-pre-compiled-releases)
   - [Build Process](#build-process)
     - [Prerequisites](#prerequisites)
     - [Linux Environment Setup](#linux-environment-setup)
     - [Clone \& Run](#clone--run)
   - [First Launch Setup](#first-launch-setup)
-- [Architecture \& Tech Stack](#-architecture--tech-stack)
+- [Architecture \& Tech Stack](#architecture--tech-stack)
   - [Tech Stack](#tech-stack)
   - [External Binaries](#external-binaries)
   - [Project Structure](#project-structure)
-- [Roadmap](#-roadmap)
-- [Known Issues](#-known-issues)
-- [Contributing](#-contributing)
-- [License \& Legal Disclaimer](#-license--legal-disclaimer)
+- [Roadmap](#roadmap)
+- [Known Issues](#known-issues)
+- [Contributing](#contributing)
+- [License \& Legal Disclaimer](#license--legal-disclaimer)
 
 ---
 
